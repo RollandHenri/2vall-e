@@ -653,7 +653,7 @@
     dotLabel: function (n) {
       return tt('js.locDot', 'Aller à la location {n}', { n: n });
     },
-    loop: true,
+    loop: false,
     autoplay: false
   });
 
@@ -668,7 +668,7 @@
     dotLabel: function (n) {
       return tt('js.campDot', 'Aller à la photo {n}', { n: n });
     },
-    loop: false,
+    loop: true,
     autoplay: true
   });
 

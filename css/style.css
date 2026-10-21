@@ -2174,16 +2174,29 @@ html:not(.js) .header__nav a:focus-visible {
 .loc-card__price {
   margin-top: auto;
   padding-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 0.25rem;
 }
 .loc-card__price-value {
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--terracotta);
 }
-.loc-card__price[data-i18n="loc.perNight"] {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.25rem;
+
+/* Bouton Réserver compact — scoped aux locations */
+.loc-card .btn--outline {
+  justify-self: center;
+  padding: 0.5rem 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: var(--terracotta-btn);
+  color: #fff;
+  border-color: var(--terracotta-btn);
+  min-width: 8.3rem;
+  min-height: 3.3rem;
+  margin-top: 0.9rem;
 }
 
 /* La slide active : +20% de largeur par rapport à l'active précédente

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview Bulle Histoire</title>
+<style>
+:root {
+  --radius: 18px;
+  --radius-sm: 12px;
+  --radius-pill: 999px;
+  --white: #ffffff;
+  --black: #1a1a1a;
+  --muted: #6b6b6b;
+  --sky: #e8f4f8;
+  --sky-2: #d0e8ef;
+  --line: #e5e5e5;
+  --terracotta: #c8553d;
+  --terracotta-btn: #b84a34;
+  --forest: #1d3b2d;
+  --forest-light: #2d5a3f;
+  --shadow: 0 12px 32px rgba(29, 59, 45, 0.12);
+  --shadow-sm: 0 4px 16px rgba(29, 59, 45, 0.08);
+  --shadow-lg: 0 24px 48px rgba(29, 59, 45, 0.16);
+  --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Georgia", serif;
+  --speed: 0.3s;
+  --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); line-height: 1.6; color: var(--black); background: transparent; }
+img { max-width: 100%; height: auto; display: block; }
+.container { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 clamp(1.5rem, 4vw, 3rem); }
+
+/* Badge */
+.badge { display: inline-block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.35em 0.85em; border-radius: var(--radius-pill); }
+.badge--red { background: rgba(200, 85, 61, 0.12); color: var(--terracotta); }
+.badge--green { background: rgba(29, 59, 45, 0.12); color: var(--forest); }
+
+/* Titres */
+.section__title { font-family: var(--font-display); font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 600; line-height: 1.2; color: var(--black); margin-top: 0.75rem; }
+
+/* Boutons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.95rem; font-weight: 600; padding: 0.85rem 1.75rem; border-radius: var(--radius-pill); border: 2px solid transparent; cursor: pointer; text-decoration: none; transition: background var(--speed) var(--ease), color var(--speed) var(--ease), border-color var(--speed) var(--ease), transform 0.15s ease; }
+.btn:active { transform: scale(0.98); }
+.btn--outline { background: transparent; border-color: var(--forest); color: var(--forest); }
+.btn--outline:hover { background: var(--forest); color: var(--white); }
+
+/* Section Histoire - Layout bulle */
+.history { padding: clamp(4rem, 8vw, 7rem) 0; }
+.history__inner--swap { display: grid; grid-template-columns: 1fr; gap: clamp(1.5rem, 5vw, 4rem); }
+.swap-panel { grid-area: 1 / 1; display: grid; grid-template-columns: 1fr; align-items: center; gap: clamp(1.5rem, 5vw, 4rem); transition: opacity 0.35s ease, visibility 0.35s ease; }
+.swap-panel:not(.is-active) { opacity: 0; visibility: hidden; pointer-events: none; }
+.swap-panel[data-panel="histoire"] .swap-panel__actions { justify-content: flex-start; }
+.swap-panel__actions { display: flex; padding-top: 0.75rem; }
+
+/* === BULLE STYLES === */
+/* Desktop: 2 colonnes, photo à gauche */
+@media (min-width: 861px) {
+  .history__inner--swap .swap-panel.is-active {
+    grid-template-columns: var(--bubble-col-width, 40%) 1fr;
+    align-items: start;
+  }
+  .swap-panel[data-panel="histoire"] .history__body { padding-top: 1.5rem; }
+}
+
+/* Mobile: bulle centrée, texte dessous */
+@media (max-width: 860px) {
+  .history__inner--swap .swap-panel.is-active {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .swap-panel[data-panel="histoire"] .history__media {
+    margin: 0 auto;
+  }
+  .swap-panel[data-panel="histoire"] .history__body { text-align: left; }
+  .swap-panel[data-panel="histoire"] .swap-panel__actions { justify-content: center; }
+}
+
+/* Bulle commune */
+.history__media {
+  width: var(--bubble-size, clamp(280px, 32vw, 420px));
+  aspect-ratio: 1;
+  object-fit: cover;
+  box-shadow: var(--shadow);
+}
+
+/* Piste A : Cercle parfait */
+.history__media--cercle {
+  border-radius: 50%;
+  /* Anneau décalé via pseudo sur wrapper */
+}
+
+/* Piste B : Organique */
+.history__media--organique {
+  border-radius: 56% 44% 52% 48% / 47% 55% 45% 53%;
+}
+
+/* Wrapper pour l'anneau décalé */
+.bubble-wrapper { position: relative; display: inline-block; }
+.bubble-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border: 1px solid var(--line);
+  border-radius: inherit;
+  pointer-events: none;
+  transition: border-color var(--speed) var(--ease);
+}
+.bubble-wrapper:hover::before { border-color: var(--terracotta); }
+.bubble-wrapper--cercle::before { border-radius: 50%; }
+.bubble-wrapper--organique::before { border-radius: 56% 44% 52% 48% / 47% 55% 45% 53%; }
+
+/* Focus visible */
+.bubble-wrapper:focus-within::before { border-color: var(--terracotta); outline: none; }
+
+/* Corps texte */
+.history__body p { color: var(--muted); margin-top: 1rem; }
+.history__body p:first-of-type { margin-top: 0.75rem; }
+
+/* Reveal animation (simplified, no JS) */
+.reveal { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <section class="section history" id="decouvrir">
+    <div class="container history__inner history__inner--swap" data-swap-root>
+      <!-- Panneau A : Notre histoire (défaut) -->
+      <div class="swap-panel is-active" data-panel="histoire">
+        <div class="bubble-wrapper bubble-wrapper--STYLE" style="--bubble-size: clamp(280px, 32vw, 420px); --bubble-col-width: 40%;">
+          <img
+            class="history__media history__media--STYLE reveal"
+            src="file:///C:/Users/rolla/Desktop/Dev_26/_Test_/T_Camp_Craw/assets/img/pro.webp"
+            width="1200"
+            height="1600"
+            alt="Le village et la vallée"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+        <div class="history__body reveal">
+          <span class="badge badge--red">Notre histoire</span>
+          <h2 class="section__title">En nature depuis 1969</h2>
+          <p>Le Camping Les 2 Vallées est né de l'amour d'une famille pour la nature. Au fil des décennies, la structure s'est développée en symbiose avec le territoire, conservant cet esprit d'ouverture et de respect du vivant.</p>
+          <p>Aujourd'hui encore, porté par de nombreuses innovations en matière d'hébergement, le camping est une étape fixe pour ceux qui veulent régénérer leur corps et leur esprit.</p>
+        </div>
+        <div class="swap-panel__actions">
+          <button type="button" class="btn btn--outline" data-swap="domaine">Découvrir le domaine</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>
