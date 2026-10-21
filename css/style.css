@@ -2249,19 +2249,33 @@ html:not(.js) .header__nav a:focus-visible {
   gap: 0.875rem;
 }
 .slider__dots button {
-  width: 10px;
-  height: 10px;
+  /* Cible tactile 24x24 (audit Lighthouse "targets-size") ;
+     le point visible de 10px est dessine en ::before centre. */
+  position: relative;
+  width: 24px;
+  height: 24px;
   padding: 0;
   border: 0;
+  border-radius: 50%;
+  background: transparent;
+}
+.slider__dots button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
   background: rgba(29, 59, 45, 0.25);
   transition:
     background var(--speed) var(--ease),
     transform var(--speed) var(--ease);
 }
-.slider__dots button.is-active {
+.slider__dots button.is-active::before {
   background: var(--terracotta);
-  transform: scale(1.3);
+  transform: translate(-50%, -50%) scale(1.3);
 }
 
 /* ---------- 18. Histoire ---------- */
@@ -3792,7 +3806,6 @@ html.is-contact-open {
     transition-delay: 0s !important;
   }
 }
-}
 
 /* ---------- 26b. Accessibilité : transparence réduite ----------
    Désactive le flou décoratif pour les utilisateurs qui préfèrent
@@ -4229,7 +4242,10 @@ html:not(.js) .lang {
     margin 0.3s ease,
     opacity var(--speed) var(--ease),
     transform 0.3s var(--ease);
-  opacity: 0.55;
+  /* 0.55 ne laissait passer que ~2.4:1 de contraste à la légende une fois
+     l'opacité mélangée au fond (échec Lighthouse). 0.8 + légende en --ink
+     = ~6.2:1 sur slide inactive, 11:1 sur l'active. */
+  opacity: 0.8;
   transform: scale(0.97);
   transform-origin: center bottom;
 }
@@ -4250,7 +4266,9 @@ html:not(.js) .lang {
   padding: 0.8rem 0.5rem 0;
   min-height: 2.4rem; /* légende toujours sur une ligne : hauteur stable */
   text-align: center;
-  color: var(--muted);
+  /* --muted (5.35:1 seul) tombait sous 4.5:1 une fois l'opacité de la
+     carte inactive mêlée au fond. --ink tient 6.2:1 atténué à 0.8. */
+  color: var(--ink);
   font-size: 0.95rem;
 }
 
@@ -4343,14 +4361,18 @@ html:not(.js) .lang {
    grandit plus au changement de photo et la nav ne saute donc plus. */
 .camping__nav {
   width: fit-content;
+  max-width: 100%;
   margin: 1rem auto 0;
   gap: 0.5rem;
+  flex-wrap: wrap; /* pastilles 24x24 : passe a la ligne sur tres petit ecran */
 }
 
-/* Compactage −50% : flèches 28px (mini HIG 28×28 au lieu de 44 par
-   défaut — la zone tactile est rattrapée par un ::after invisible),
-   pastilles 5px et pas resserré. La nav passe d'environ 338px (10
-   pastilles) à environ 167px. */
+/* Compactage : fleches 28px (mini HIG 28x28 au lieu de 44 par
+   defaut — la zone tactile est rattrapee par un ::after invisible).
+   Pastilles : bouton 24x24 transparent (cible tactile minimale
+   exigee par Lighthouse "targets-size"), point visible de 5px dessine
+   en ::before centre ; pas resserre a 2px pour rester compact.
+   La nav passe d'environ 338px (10 pastilles) a environ 296px. */
 .camping__nav .slider__arrow {
   position: relative;
   width: 28px;
@@ -4361,15 +4383,277 @@ html:not(.js) .lang {
   height: 14px;
 }
 .camping__nav .slider__arrow::after {
-  /* Zone tactile 44×44 dès desktop, toujours ≥ 28 (HIG accessibility) */
+  /* Zone tactile 44x44 des desktop, toujours >= 28 (HIG accessibility) */
   content: "";
   position: absolute;
   inset: -8px;
 }
 .camping__nav .slider__dots {
-  gap: 0.3125rem;
+  gap: 0.125rem;
 }
 .camping__nav .slider__dots button {
+  width: 24px;
+  height: 24px;
+}
+.camping__nav .slider__dots button::before {
   width: 5px;
   height: 5px;
+}
+.camping__nav .slider__dots button.is-active::before {
+  transform: translate(-50%, -50%) scale(1.3);
+}
+
+/* ============================================================
+   ÉCRAN DE CHARGEMENT (overlay plein écran, index uniquement)
+   Diorama camping dessiné en ~3 s + anneau de progression plein
+   à 3,5 s, fondu de sortie à 4 s (temporisation dans script.js).
+   Masqué si JS inactif : le head pose la classe .js sur <html>.
+   ============================================================ */
+html:not(.js) #loader-screen {
+  display: none;
+}
+
+#loader-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 20%, var(--forest) 0%, var(--forest-2) 90%);
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* classe ajoutée en JS après 4 secondes : fait disparaître le loader */
+#loader-screen.loader-hide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#loader-screen .ring-wrap {
+  position: relative;
+  width: 440px;
+  height: 440px;
+  max-width: 90vw;
+  max-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#loader-screen .progress-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg); /* démarre à midi */
+}
+#loader-screen .progress-ring-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.15);
+  stroke-width: 8;
+}
+#loader-screen .progress-ring-fill {
+  fill: none;
+  stroke: var(--terracotta);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 1282; /* circonférence du cercle (r=204) */
+  stroke-dashoffset: 1282;
+  filter: drop-shadow(0 0 5px rgba(218, 108, 83, 0.6));
+  /* se remplit tout au long du loader, terminé 0.5s avant sa disparition
+     (disparition à 4s -> anneau plein à 3.5s) */
+  animation: loaderRingFill 3.5s linear forwards;
+}
+@keyframes loaderRingFill {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+#loader-screen .stage {
+  width: 340px;
+  height: 340px;
+  max-width: 70vw;
+  max-height: 55vh;
+  perspective: 1300px;
+}
+#loader-screen .diorama {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: rotateX(16deg) rotateY(-12deg);
+  filter: drop-shadow(0 40px 35px rgba(0, 0, 0, 0.45));
+}
+#loader-screen .layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+#loader-screen .layer-sky   { transform: translateZ(-110px); }
+#loader-screen .layer-trees { transform: translateZ(-55px); }
+#loader-screen .layer-tent  { transform: translateZ(0px); }
+#loader-screen .layer-fire  { transform: translateZ(45px); }
+#loader-screen .layer-floor {
+  transform: translateZ(-2px) rotateX(90deg) translateY(170px);
+  transform-origin: center;
+}
+
+#loader-screen .floor-disc {
+  fill: url(#floorGrad);
+}
+
+/* --- traits --- */
+#loader-screen .stroke {
+  fill: none;
+  stroke: #1a1a1a;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+#loader-screen .stroke-thin {
+  fill: none;
+  stroke: #1a1a1a;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+#loader-screen .fill-ink {
+  fill: #1a1a1a;
+  stroke: none;
+}
+
+/* --- animation de tracé (stroke) --- */
+#loader-screen .stroke,
+#loader-screen .stroke-thin {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation-name: loaderDraw;
+  animation-timing-function: ease;
+  animation-fill-mode: both;
+}
+@keyframes loaderDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* --- animation d'apparition (remplissages) --- */
+#loader-screen .fill-ink,
+#loader-screen .fill-shade,
+#loader-screen .fill-moon,
+#loader-screen .fill-star {
+  fill-opacity: 0;
+  animation-name: loaderFillIn;
+  animation-timing-function: ease;
+  animation-fill-mode: both;
+}
+@keyframes loaderFillIn {
+  to {
+    fill-opacity: 1;
+  }
+}
+
+/* --- couleurs lune / étoiles --- */
+#loader-screen .fill-moon {
+  fill: #fdfdfd;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.35));
+}
+#loader-screen .fill-star {
+  fill: #ffd34d;
+}
+
+/* --- calendrier (dessin complet en ~3s, puis 1s de pause statique) --- */
+
+/* lune en premier, puis chaque étoile se colore l'une après l'autre */
+#loader-screen .layer-sky .fill-moon,
+#loader-screen .layer-sky .fill-star {
+  animation-duration: 0.3s;
+  animation-delay: calc(0.15s * var(--i, 0));
+}
+
+#loader-screen .layer-trees .stroke {
+  animation-duration: 0.66s;
+  animation-delay: calc(0.54s + 0.03s * var(--i, 0));
+}
+
+/* la tente et le feu ont leur minutage fixé directement sur chaque
+   élément dans le HTML afin de s'étaler sur les 3 premières secondes */
+
+#loader-screen .layer-floor .floor-disc {
+  fill-opacity: 0;
+  animation: loaderFadeFloor 1s ease forwards;
+  animation-delay: 0.1s;
+}
+@keyframes loaderFadeFloor {
+  to {
+    fill-opacity: 0.35;
+  }
+}
+
+/* --- étincelles du feu, volée unique après le dessin --- */
+#loader-screen .spark {
+  fill: #ffb347;
+  opacity: 0;
+  animation-name: loaderSpark;
+  animation-duration: 0.4s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in;
+}
+@keyframes loaderSpark {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(1);
+  }
+  10% {
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-55px) scale(0.3);
+  }
+}
+
+/* Accessibilité : sans animation, le diorama s'affiche d'un coup
+   (statique), l'anneau se remplit sans progresser visuellement et le
+   loader disparaît en fondu simple posé par script.js. */
+@media (prefers-reduced-motion: reduce) {
+  #loader-screen .stroke,
+  #loader-screen .stroke-thin {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  #loader-screen .fill-ink,
+  #loader-screen .fill-shade,
+  #loader-screen .fill-moon,
+  #loader-screen .fill-star {
+    animation: none;
+    fill-opacity: 1;
+  }
+  #loader-screen .layer-floor .floor-disc {
+    animation: none;
+    fill-opacity: 0.35;
+  }
+  #loader-screen .spark {
+    animation: none;
+    opacity: 0;
+  }
+  #loader-screen .progress-ring-fill {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  #loader-screen {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
 }

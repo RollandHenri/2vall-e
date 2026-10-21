@@ -1654,4 +1654,25 @@
     updateScrollEffects();
   });
 
+  /* ============================================================
+     Écran de chargement (index uniquement) :
+     3 s de dessin du diorama + 1 s de pause statique, puis fondu
+     CSS de .6 s et retrait du DOM. L'anneau se remplit en 3,5 s
+     (plein 0,5 s avant la disparition). Sans JS, le loader reste
+     masqué (classe .js + html:not(.js) dans style.css).
+     ============================================================ */
+  var loaderScreen = document.getElementById('loader-screen');
+  if (loaderScreen) {
+    var LOADER_DURATION_MS = 4000;
+    window.setTimeout(function () {
+      loaderScreen.classList.add('loader-hide');
+
+      /* une fois le fondu CSS terminé (.6s), on retire complètement
+         le loader du DOM pour ne plus bloquer aucune interaction */
+      loaderScreen.addEventListener('transitionend', function () {
+        if (loaderScreen.parentNode) loaderScreen.parentNode.removeChild(loaderScreen);
+      }, { once: true });
+    }, LOADER_DURATION_MS);
+  }
+
 })();

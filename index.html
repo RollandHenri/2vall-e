@@ -62,6 +62,202 @@
     </script>
   </head>
   <body data-i18n-page="home">
+    <!-- ===================== ÉCRAN DE CHARGEMENT =====================
+         Diorama camping qui se dessine (~3 s) + anneau de progression
+         (plein à 3,5 s), fondu de sortie à 4 s puis retrait du DOM.
+         Decoratif : aria-hidden. Masque si JS inactif (classe .js posée
+         dans le head). Caché via html:not(.js) dans style.css. -->
+    <div id="loader-screen" aria-hidden="true">
+      <div class="ring-wrap">
+
+        <!-- anneau de chargement : se remplit progressivement, plein 0.5s avant la disparition -->
+        <svg class="progress-ring" viewBox="0 0 440 440">
+          <circle class="progress-ring-bg" cx="220" cy="220" r="204"/>
+          <circle class="progress-ring-fill" cx="220" cy="220" r="204"/>
+        </svg>
+
+        <div class="stage" id="stage">
+          <div class="diorama" id="diorama">
+
+            <!-- ===== SOL / OMBRE ===== -->
+            <svg class="layer layer-floor" viewBox="0 0 500 460">
+              <defs>
+                <radialGradient id="floorGrad" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#000000" stop-opacity=".55"/>
+                  <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+              <ellipse class="floor-disc" cx="250" cy="300" rx="190" ry="55"/>
+            </svg>
+
+            <!-- ===== CIEL : lune + étoiles ===== -->
+            <svg class="layer layer-sky" viewBox="0 0 500 460">
+              <path class="fill-moon" style="--i:0"
+                d="M 150 50
+                   C 126 50 107 69 107 93
+                   C 107 117 126 136 150 136
+                   C 132 128 119 112 119 93
+                   C 119 74 132 58 150 50 Z"/>
+              <g>
+                <path class="fill-star" style="--i:1" d="M 195 42 L199 54 L211 58 L199 62 L195 74 L191 62 L179 58 L191 54 Z"/>
+                <path class="fill-star" style="--i:2" d="M 252 27 L254 35 L262 37 L254 39 L252 47 L250 39 L242 37 L250 35 Z"/>
+                <path class="fill-star" style="--i:3" d="M 297 52 L300 62 L310 65 L300 68 L297 78 L294 68 L284 65 L294 62 Z"/>
+                <path class="fill-star" style="--i:4" d="M 333 33 L335 40 L342 42 L335 44 L333 51 L331 44 L324 42 L331 40 Z"/>
+                <path class="fill-star" style="--i:5" d="M 220 72 L222 79 L229 81 L222 83 L220 90 L218 83 L211 81 L218 79 Z"/>
+                <path class="fill-star" style="--i:6" d="M 272 76 L274 82 L280 84 L274 86 L272 92 L270 86 L264 84 L270 82 Z"/>
+                <path class="fill-star" style="--i:7" d="M 360 70 L361 75 L366 77 L361 79 L360 84 L359 79 L354 77 L359 75 Z"/>
+                <path class="fill-star" style="--i:8" d="M 175 95 L176 100 L181 102 L176 104 L175 109 L174 104 L169 102 L174 100 Z"/>
+              </g>
+            </svg>
+
+            <!-- ===== SAPINS ===== -->
+            <svg class="layer layer-trees" viewBox="0 0 500 460">
+              <defs>
+                <linearGradient id="treeGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#3a3a3a"/>
+                  <stop offset="100%" stop-color="#111111"/>
+                </linearGradient>
+              </defs>
+
+              <!-- gauche -->
+              <g class="stroke">
+                <polygon style="--i:0" class="fill-shade" fill="url(#treeGrad)" points="68,203 36,254 100,254"/>
+                <polygon style="--i:1" class="fill-shade" fill="url(#treeGrad)" points="68,177 32,228 104,228"/>
+                <polygon style="--i:2" class="fill-shade" fill="url(#treeGrad)" points="68,151 42,197 94,197"/>
+                <line     style="--i:3" x1="68" y1="254" x2="68" y2="280"/>
+              </g>
+
+              <!-- droite -->
+              <g class="stroke">
+                <polygon style="--i:4" class="fill-shade" fill="url(#treeGrad)" points="432,197 398,250 466,250"/>
+                <polygon style="--i:5" class="fill-shade" fill="url(#treeGrad)" points="432,170 392,224 472,224"/>
+                <polygon style="--i:6" class="fill-shade" fill="url(#treeGrad)" points="432,146 402,192 462,192"/>
+                <line     style="--i:7" x1="432" y1="250" x2="432" y2="280"/>
+              </g>
+            </svg>
+
+            <!-- ===== TENTE TRIANGULAIRE (perspective 3/4) =====
+                 Se dessine entièrement sur les 3 premières secondes. -->
+            <svg class="layer layer-tent" viewBox="0 0 500 460">
+              <defs>
+                <linearGradient id="tentGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%"  stop-color="#e9e9e9"/>
+                  <stop offset="45%" stop-color="#ffffff"/>
+                  <stop offset="100%" stop-color="#cfcfcf"/>
+                </linearGradient>
+                <linearGradient id="flapGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%"  stop-color="#d8d8d8"/>
+                  <stop offset="100%" stop-color="#bdbdbd"/>
+                </linearGradient>
+                <linearGradient id="tentSideGrad" x1="0" y1="0" x2="1" y2="0.3">
+                  <stop offset="0%"  stop-color="#b9b9b9"/>
+                  <stop offset="100%" stop-color="#8f8f8f"/>
+                </linearGradient>
+              </defs>
+
+              <!-- 0s – .66s : silhouette triangulaire principale -->
+              <path class="stroke" d="M160,300 L250,120 L340,300 Z"
+                style="animation-duration:.66s; animation-delay:0s"/>
+              <path class="fill-shade" fill="url(#tentGrad)" d="M160,300 L250,120 L340,300 Z"
+                style="animation-duration:.36s; animation-delay:.48s"/>
+
+              <!-- .78s – 1.14s : triangle d'entrée (porte) -->
+              <path class="stroke" d="M215,300 L250,165 L285,300 Z"
+                style="animation-duration:.36s; animation-delay:.78s"/>
+              <path class="fill-shade" fill="url(#flapGrad)" d="M215,300 L250,165 L285,300 Z"
+                style="animation-duration:.3s; animation-delay:1.02s"/>
+
+              <!-- .96s – 1.2s : mât central -->
+              <path class="stroke-thin" d="M250,120 L250,300"
+                style="animation-duration:.24s; animation-delay:.96s"/>
+
+              <!-- 1.14s – 1.5s : bord zigzag de la toile de porte -->
+              <path class="stroke-thin"
+                d="M215,300 L223,312 L231,300 L239,312 L247,300 L255,312 L263,300 L271,312 L279,300 L285,312"
+                style="animation-duration:.36s; animation-delay:1.14s"/>
+
+              <!-- 1.5s – 2.16s : pan latéral (extrusion en profondeur) -->
+              <path class="stroke-thin" d="M250,120 L340,300 L410,265 L320,85 Z"
+                style="animation-duration:.6s; animation-delay:1.5s"/>
+              <path class="fill-shade" fill="url(#tentSideGrad)" d="M250,120 L340,300 L410,265 L320,85 Z"
+                style="animation-duration:.36s; animation-delay:1.8s"/>
+
+              <!-- 1.56s – 1.8s : arête de faîtage vers la profondeur -->
+              <path class="stroke" d="M250,120 L320,85"
+                style="animation-duration:.24s; animation-delay:1.56s"/>
+              <!-- 1.98s – 2.22s : arête de sol côté profondeur -->
+              <path class="stroke-thin" d="M340,300 L410,265"
+                style="animation-duration:.24s; animation-delay:1.98s"/>
+
+              <!-- 2.28s – 2.94s : haubans et piquets -->
+              <path class="stroke-thin" d="M160,300 L120,325"
+                style="animation-duration:.18s; animation-delay:2.28s"/>
+              <circle class="fill-ink" cx="120" cy="325" r="4"
+                style="animation-duration:.12s; animation-delay:2.46s"/>
+
+              <path class="stroke-thin" d="M340,300 L380,325"
+                style="animation-duration:.18s; animation-delay:2.37s"/>
+              <circle class="fill-ink" cx="380" cy="325" r="4"
+                style="animation-duration:.12s; animation-delay:2.55s"/>
+
+              <path class="stroke-thin" d="M410,265 L448,290"
+                style="animation-duration:.18s; animation-delay:2.64s"/>
+              <circle class="fill-ink" cx="448" cy="290" r="4"
+                style="animation-duration:.12s; animation-delay:2.82s"/>
+            </svg>
+
+            <!-- ===== FEU DE CAMP ===== -->
+            <svg class="layer layer-fire" viewBox="0 0 500 460">
+              <defs>
+                <linearGradient id="flameGrad" x1="0" y1="1" x2="0" y2="0">
+                  <stop offset="0%"  stop-color="#ff5a1f"/>
+                  <stop offset="55%" stop-color="#ffb02e"/>
+                  <stop offset="100%" stop-color="#ffe9b0"/>
+                </linearGradient>
+                <linearGradient id="flameGrad2" x1="0" y1="1" x2="0" y2="0">
+                  <stop offset="0%"  stop-color="#ff5a1f"/>
+                  <stop offset="60%" stop-color="#ffcf4d"/>
+                  <stop offset="100%" stop-color="#fff3c4"/>
+                </linearGradient>
+              </defs>
+
+              <!-- buches croisées : 2.0s – 2.49s -->
+              <g class="stroke-thin">
+                <line x1="148" y1="331" x2="206" y2="347" style="animation-duration:.25s; animation-delay:2s"/>
+                <line x1="148" y1="347" x2="206" y2="331" style="animation-duration:.25s; animation-delay:2.08s"/>
+                <line x1="160" y1="334" x2="170" y2="337" style="animation-duration:.2s;  animation-delay:2.16s"/>
+                <line x1="184" y1="340" x2="194" y2="343" style="animation-duration:.2s;  animation-delay:2.24s"/>
+              </g>
+
+              <!-- flammes : 2.3s – 2.85s -->
+              <path class="fill-shade" fill="url(#flameGrad)" style="animation-duration:.25s; animation-delay:2.4s"
+                d="M 177 336 C 164 320 167 304 178 293 C 174 307 183 311 187 301 C 193 314 189 327 177 336 Z"/>
+              <path class="stroke-thin" style="animation-duration:.3s; animation-delay:2.3s"
+                d="M 177 336 C 164 320 167 304 178 293 C 174 307 183 311 187 301 C 193 314 189 327 177 336 Z"/>
+
+              <path class="fill-shade" fill="url(#flameGrad2)" style="animation-duration:.25s; animation-delay:2.5s"
+                d="M 159 334 C 151 323 154 312 162 306 C 159 315 164 318 167 311 C 171 320 168 329 159 334 Z"/>
+              <path class="stroke-thin" style="animation-duration:.3s; animation-delay:2.4s"
+                d="M 159 334 C 151 323 154 312 162 306 C 159 315 164 318 167 311 C 171 320 168 329 159 334 Z"/>
+
+              <path class="fill-shade" fill="url(#flameGrad2)" style="animation-duration:.25s; animation-delay:2.6s"
+                d="M 196 334 C 188 323 191 312 198 306 C 196 315 200 318 203 311 C 207 320 204 329 196 334 Z"/>
+              <path class="stroke-thin" style="animation-duration:.3s; animation-delay:2.5s"
+                d="M 196 334 C 188 323 191 312 198 306 C 196 315 200 318 203 311 C 207 320 204 329 196 334 Z"/>
+
+              <!-- étincelles : brève volée unique, 2.6s – 3.0s, puis plus rien ne bouge -->
+              <circle class="spark" cx="170" cy="310" r="2.4" style="animation-delay:2.6s"/>
+              <circle class="spark" cx="182" cy="305" r="2"   style="animation-delay:2.7s"/>
+              <circle class="spark" cx="190" cy="312" r="2.6" style="animation-delay:2.8s"/>
+              <circle class="spark" cx="176" cy="300" r="1.8" style="animation-delay:2.9s"/>
+            </svg>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <!-- ===================== SPRITE SVG =====================
          Les glyphes Instagram et Facebook, définis une seule fois et repris
          par <use> à tous les endroits où ils servent : le panneau social du
