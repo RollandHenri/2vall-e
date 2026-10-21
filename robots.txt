@@ -1,0 +1,7 @@
+# Camping Les 2 Vallées — exploration autorisée partout.
+User-agent: *
+Disallow:
+
+# POINTAGE À REMPLACER avec le vrai domaine au moment de la mise en ligne
+# (comme BOOKING.url dans js/script.js) :
+Sitemap: https://www.exemple-domaine.fr/sitemap.xml

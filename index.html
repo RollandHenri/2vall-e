@@ -1,0 +1,2435 @@
+﻿<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Camping Les 2 Vallées — Nature &amp; Glamping</title>
+    <meta
+      name="description"
+      content="Camping Les 2 Vallées : nature, glamping, piscines et activités en pleine nature. Réservez votre séjour."
+    />
+    <meta name="theme-color" content="#1D3B2D" />
+
+    <!-- Polices locales (Fraunces & Onest, SIL OFL) : @font-face dans style.css,
+       aucun appel externe. Préchargement des deux latins du premier rendu
+       (les -ext servent plus tard, au besoin, via unicode-range). -->
+    <link
+      rel="preload"
+      href="assets/fonts/fraunces-latin.woff2"
+      as="font"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/onest-latin.woff2"
+      as="font"
+      crossorigin
+    />
+    <link rel="stylesheet" href="css/style.min.css?v=48" />
+    <link rel="icon" href="favicon.png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <!-- Pas de referer qui fuite vers les plateformes externes (réservation). -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <!-- CSP : tout est local ; inline conservés pour le hook .js et les
+       styles animés posés par le script. À déplacer en en-tête HTTP côté
+       hébergeur si l'occasion se présente (la meta CSP est plus limitée). -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data:; media-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'"
+    />
+    <!-- Réseaux sociaux : DOMAIN À REMPLACER (comme BOOKING.url dans
+       js/script.js) pour canonical / og:url / og:image / sitemap.xml. -->
+    <link rel="canonical" href="https://www.exemple-domaine.fr/" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="Camping Les 2 Vallées — Nature &amp; Glamping"
+    />
+    <meta
+      property="og:description"
+      content="Camping Les 2 Vallées : nature, glamping, piscines et activités en pleine nature. Réservez votre séjour."
+    />
+    <meta property="og:url" content="https://www.exemple-domaine.fr/" />
+    <meta
+      property="og:image"
+      content="https://www.exemple-domaine.fr/assets/logo/camping-les-2-vallees.png"
+    />
+    <meta name="twitter:card" content="summary" />
+    <!-- Détection JS (une ligne, en tête) : le burger n'apparaît que si
+       le script tourne ; sans JS, la nav reste visible en dur. -->
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+  <body data-i18n-page="home">
+    <!-- ===================== SPRITE SVG =====================
+         Les glyphes Instagram et Facebook, définis une seule fois et repris
+         par <use> à tous les endroits où ils servent : le panneau social du
+         header (desktop) et la ligne de réseaux sociaux du menu mobile.
+         currentColor : la couleur se règle en CSS, un seul endroit à changer. -->
+    <svg class="svg-sprite" aria-hidden="true" focusable="false">
+      <symbol id="i-instagram" viewBox="0 0 24 24">
+        <rect
+          x="2.5"
+          y="2.5"
+          width="19"
+          height="19"
+          rx="5.5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        />
+        <circle
+          cx="12"
+          cy="12"
+          r="4.2"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        />
+        <circle cx="17.4" cy="6.6" r="1.3" fill="currentColor" />
+      </symbol>
+      <!-- Le « f » est étroit : son viewBox est resserré sur le glyphe pour
+           qu'il ait la même hauteur visuelle que le cadre de l'Instagram
+           (sinon il paraît deux fois plus petit à côté). -->
+      <symbol id="i-facebook" viewBox="6.5 2.5 11 20">
+        <path
+          fill="currentColor"
+          d="M13.5 21v-7.6h2.6l.4-3h-3V8.5c0-.87.24-1.46 1.5-1.46h1.6V4.42A21 21 0 0 0 14.3 4.3c-2.33 0-3.9 1.42-3.9 4.03v2.1H7.8v3h2.6V21z"
+        />
+      </symbol>
+    </svg>
+
+    <!-- ===================== HEADER (logo — nav — CTA) ===================== -->
+    <header class="header" id="header">
+      <div class="header__inner">
+        <a
+          href="#accueil"
+          class="logo"
+          aria-label="Camping Les 2 Vallées — Accueil"
+        >
+          <span class="logo__mark" aria-hidden="true">
+            <img
+              src="assets/logo/camping-les-2-vallees.png"
+              alt=""
+              width="338"
+              height="192"
+              decoding="async"
+            />
+          </span>
+        </a>
+
+        <!-- Deux moitiés de nav : en desktop elles encadrent le logo et se
+             déploient en glissant depuis le centre (cf. §9c du CSS) ; en
+             =860px elles redeviennent une seule colonne dans le panneau du
+             burger. Deux listes distinctes = deux moitiés de largeur
+             indépendante, sans casser la sémantique de liste. -->
+        <nav
+          class="header__nav"
+          id="primaryNav"
+          aria-label="Navigation principale"
+          data-i18n-attr="aria-label:header.navAria"
+        >
+          <ul class="header__nav-group">
+            <li><a href="#accueil" data-i18n="nav.accueil">Accueil</a></li>
+            <li>
+              <a href="#intro" data-i18n="nav.camping">Camping</a>
+            </li>
+            <li>
+              <a href="#prestation" data-i18n="nav.prestations">Prestations</a>
+            </li>
+          </ul>
+          <ul class="header__nav-group">
+            <li><a href="#region" data-i18n="nav.region">Région</a></li>
+            <li>
+              <a href="#locations" data-i18n="nav.locations">Locations</a>
+            </li>
+            <li>
+              <a href="#informations" data-i18n="nav.infos">Infos</a>
+            </li>
+            <!-- Réseaux sociaux : sous « Infos », en ligne. Masqués en desktop
+                 (cf. §9c du CSS) — la nav desktop les porte dans le panneau
+                 déroulant sous la pastille de langue. -->
+            <li class="header__nav-social">
+              <a
+                href="https://www.instagram.com/campingles2vallees.aveyron"
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                aria-label="Instagram"
+              >
+                <svg class="social__icon" aria-hidden="true">
+                  <use href="#i-instagram" />
+                </svg>
+              </a>
+              <a
+                href="https://www.facebook.com/Campingles2Vallees.Aveyron/"
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                aria-label="Facebook"
+              >
+                <svg class="social__icon" aria-hidden="true">
+                  <use href="#i-facebook" />
+                </svg>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Sélecteur de langue : pilule drapeau (FR par défaut) ouvrant un
+             petit menu FR / EN (UK) / NL. Le fond du bouton est le drapeau de
+             la langue active (cf. §29 du CSS). Sans JS : masqué, le site reste
+             en français. -->
+        <div class="lang" id="langSwitch">
+          <button
+            class="lang__btn lang__btn--fr"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="langMenu"
+            aria-label="Changer de langue"
+            title="Changer de langue"
+            data-i18n-attr="aria-label:header.langAria, title:header.langAria"
+          ></button>
+          <ul class="lang__menu" id="langMenu" hidden>
+            <li>
+              <button
+                class="lang__opt"
+                type="button"
+                data-lang="fr"
+                aria-pressed="true"
+              >
+                <span
+                  class="lang__flag lang__flag--fr"
+                  aria-hidden="true"
+                ></span
+                >Français<span class="lang__default" data-i18n="js.langDefault"
+                  >défaut</span
+                >
+              </button>
+            </li>
+            <li>
+              <button class="lang__opt" type="button" data-lang="en">
+                <span
+                  class="lang__flag lang__flag--en"
+                  aria-hidden="true"
+                ></span
+                >English
+              </button>
+            </li>
+            <li>
+              <button class="lang__opt" type="button" data-lang="nl">
+                <span
+                  class="lang__flag lang__flag--nl"
+                  aria-hidden="true"
+                ></span
+                >Nederlands
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Bouton d'ouverture : burger (3 traits) en =860px, bouton texte
+             « Menu » en desktop — même bouton, même bascule, deux habits.
+             Il se change en croix à l'ouverture (cf. §9c du CSS).
+             Sans JS la classe .js est absente ? bouton masqué, nav visible. -->
+        <button
+          class="header__burger"
+          type="button"
+          data-label="Menu"
+          aria-expanded="false"
+          aria-controls="primaryNav"
+          aria-label="Ouvrir le menu"
+          data-i18n-attr="aria-label:js.menuOpen"
+        >
+          <span class="header__burger-bars" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+        </button>
+      </div>
+
+      <!-- Bloc social : les deux réseaux sortent sous la pastille de langue,
+           hors de la barre, quand la nav est ouverte (desktop seulement —
+           cf. §29b du CSS). Il est enfant du .header et non du .lang : c'est
+           ce qui lui permet de courir jusqu'au bord droit de l'écran. -->
+      <div class="social-drop">
+        <a
+          href="https://www.instagram.com/campingles2vallees.aveyron"
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          aria-label="Instagram"
+        >
+          <svg class="social__icon" aria-hidden="true">
+            <use href="#i-instagram" />
+          </svg>
+        </a>
+        <a
+          href="https://www.facebook.com/Campingles2Vallees.Aveyron/"
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          aria-label="Facebook"
+        >
+          <svg class="social__icon" aria-hidden="true">
+            <use href="#i-facebook" />
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <!-- ===================== HERO ===================== -->
+      <section class="hero" id="accueil" data-theme="dark">
+        <div class="hero__media" aria-hidden="true">
+          <!-- Vidéo du desktop. Pas de src ici, et preload="none" : tant que
+               le script n'a pas posé la source, ni le fichier ni la moindre
+               octet ne partent. Le script la branche au-dessus de 861px,
+               hors mouvement réduit, et la retire en dessous. -->
+          <video
+            class="hero__video"
+            id="heroVideo"
+            muted
+            loop
+            playsinline
+            preload="none"
+            disablepictureinpicture
+          ></video>
+          <!-- Carrousel du téléphone : six calques qui se croisent en fondu.
+               Les dégradés sont provisoires — chaque --slide-bg deviendra une
+               photo, sans rien changer d'autre. -->
+          <div class="hero__slides" id="heroSlides">
+            <span class="hero__slide hero__slide--1"></span>
+            <span class="hero__slide hero__slide--2"></span>
+            <span class="hero__slide hero__slide--3"></span>
+            <span class="hero__slide hero__slide--4"></span>
+            <span class="hero__slide hero__slide--5"></span>
+            <span class="hero__slide hero__slide--6"></span>
+          </div>
+        </div>
+        <div class="hero__overlay" aria-hidden="true"></div>
+        <div class="container hero__content">
+          <!-- Fondu d'entrée (.hero-reveal) déclenché par l'animation CSS :
+               même courbe et durée que l'ancien .reveal, mais le titre est
+               compté comme LCP dès la première peinture (l'observer JS ne
+               repousse plus son apparition ni son comptage) -->
+          <p class="hero__eyebrow hero-reveal" data-i18n="hero.eyebrow">
+            Nature &amp; Grand air
+          </p>
+          <h1 class="hero__title hero-reveal">
+            <!-- Structure fixe, identique dans toutes les langues : titre /
+                 ligne d'étoiles (seule instance des SVG, jamais dupliquée dans
+                 les traductions) / slogan. data-i18n descend sur les spans
+                 de texte — seuls les mots changent selon la langue. -->
+            <span data-i18n="hero.title">Camping Les 2 Vallées</span><br />
+            <span class="hero__stars" aria-hidden="true">
+              <svg class="hero__star" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 .587l3.668 7.431L24 9.138l-6 5.847L19.336 23 12 19.117 4.664 23 6 14.985 0 9.138l8.332-1.12z"
+                  fill="currentColor"
+                />
+              </svg>
+              <svg class="hero__star" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 .587l3.668 7.431L24 9.138l-6 5.847L19.336 23 12 19.117 4.664 23 6 14.985 0 9.138l8.332-1.12z"
+                  fill="currentColor"
+                />
+              </svg>
+              <svg class="hero__star" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 .587l3.668 7.431L24 9.138l-6 5.847L19.336 23 12 19.117 4.664 23 6 14.985 0 9.138l8.332-1.12z"
+                  fill="currentColor"
+                />
+              </svg> </span
+            ><br />
+            <span data-i18n="hero.slogan">Là où naît le bonheur</span>
+          </h1>
+          <p class="hero__subtitle hero-reveal" hidden></p>
+          <div class="hero__actions hero-reveal">
+            <a href="#prestation" class="btn btn--accent" data-i18n="hero.cta"
+              >Découvrir</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SIPARIO (rideau épinglé qui révèle le contenu) ===================== -->
+      <section class="sipario" id="sipario" data-theme="dark">
+        <div class="sipario__sticky">
+          <!-- Contenu révélé entre les deux rideaux -->
+          <div class="sipario__content">
+            <span class="badge badge--cyan">Camping</span>
+            <h2 class="sipario__title">Camping Les 2 Vallées</h2>
+            <p data-i18n="sipario.p">
+              Votre prochain lieu de séjour. Nous vous accueillons pour les
+              locations et les emplacements de camping dans une région riche en
+              découvertes et en histoires
+            </p>
+            <a href="#locations" class="btn btn--accent" data-i18n="sipario.cta"
+              >Découvrir les solutions</a
+            >
+          </div>
+          <!-- Les deux panneaux du rideau -->
+          <div
+            class="sipario__panel sipario__panel--left"
+            data-curtain="left"
+            aria-hidden="true"
+          ></div>
+          <div
+            class="sipario__panel sipario__panel--right"
+            data-curtain="right"
+            aria-hidden="true"
+          ></div>
+        </div>
+      </section>
+
+      <!-- ===================== INTRO ===================== -->
+      <section class="section intro" id="intro">
+        <div class="container intro__inner">
+          <span class="badge badge--yellow reveal" data-i18n="intro.badge"
+            >Depuis 1969</span
+          >
+          <h2 class="section__title reveal" data-i18n="intro.title">
+            Camping à Nant, Aveyron
+          </h2>
+          <p class="lead reveal" data-i18n="intro.lead">
+            Le camping Les 2 Vallées en Aveyron, sera votre prochain lieu de
+            séjour. Nous vous accueillons du 10 avril au 31 octobre 2027 pour
+            les locations et les emplacements de camping !
+          </p>
+          <div class="intro__grid">
+            <article class="intro__card reveal">
+              <h3 data-i18n="intro.c1.title">Emplacements</h3>
+              <p data-i18n="intro.c1.p">
+                <span class="mark">Retrouvez 80 emplacements</span>, dont 62
+                emplacements (pour votre tente, votre caravane ou votre
+                camping-car) et 18 locations (1 cabane sans sanitaires, 16
+                mobil-homes et 1 chalet).
+              </p>
+            </article>
+            <article class="intro__card reveal">
+              <h3 data-i18n="intro.c2.title">Un voyage dans la nature</h3>
+              <p data-i18n="intro.c2.p">
+                <span class="mark">À 800m du village médiéval de Nant</span>,
+                offrant toutes les commodités, c’est l’endroit parfait pour
+                découvrir Millau, les Caves de Roquefort, les Gorges du Tarn,
+                Rodez et les nombreux sites incontournables de l’Aveyron.
+              </p>
+            </article>
+            <article class="intro__card reveal">
+              <h3 data-i18n="intro.c3.title">Confort &amp; commodités</h3>
+              <p data-i18n="intro.c3.p">
+                <span class="mark">La combinaison parfaite</span> peut
+                accueillir les personnes à mobilité réduite (PMR) de nombreux
+                emplacements de camping sont accessibles, plats et spacieux. De
+                plus, un espace sanitaire privé avec toutes les commodités
+                adaptées est mis à disposition.
+              </p>
+            </article>
+          </div>
+
+          <!-- Carrousel photos du camping : même composant que le slider
+               « Nos locations ». Photos dans le dossier dédié
+               assets/img/camping/ (ajouter un <li> = une photo de plus). -->
+          <div
+            class="slider camping__slider"
+            id="campGallerySlider"
+            tabindex="0"
+            role="region"
+            aria-label="Carrousel des photos du camping"
+            aria-roledescription="carrousel"
+            data-i18n-attr="aria-label:campGallery.sliderAria, aria-roledescription:js.role"
+          >
+            <div class="slider__viewport camping__viewport">
+              <ul class="slider__track camping__track" id="campGalleryTrack">
+                <li class="camp-card">
+                  <img
+                    class="camp-card__media"
+                    src="assets/img/camping/camping-riviere-tarn_resultat.webp"
+                    width="1200"
+                    height="800"
+                    alt="Le camping au bord du Tarn"
+                    loading="eager"
+                    decoding="async"
+                  />
+                  <p class="camp-card__caption">Le camping au bord du Tarn</p>
+                </li>
+                <li class="camp-card">
+                  <img
+                    class="camp-card__media"
+                    src="assets/img/camping/emplacement.webp"
+                    width="1200"
+                    height="800"
+                    alt="Emplacements spacieux du camping"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p class="camp-card__caption">Emplacements spacieux</p>
+                </li>
+                <li class="camp-card">
+                  <img
+                    class="camp-card__media"
+                    src="assets/img/camping/IMG_1022-scaled_resultat.webp"
+                    width="1200"
+                    height="800"
+                    alt="Vue d'ensemble du camping Les 2 Vallées"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p class="camp-card__caption">Vue du camping</p>
+                </li>
+                <li class="camp-card">
+                  <img
+                    class="camp-card__media"
+                    src="assets/img/camping/piscine.webp"
+                    width="1200"
+                    height="800"
+                    alt="La piscine du camping"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p class="camp-card__caption">La piscine</p>
+                </li>
+                <li class="camp-card">
+                  <img
+                    class="camp-card__media"
+                    src="assets/img/camping/chalet.webp"
+                    width="1200"
+                    height="800"
+                    alt="Chalet du camping"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p class="camp-card__caption">Nos locations</p>
+                </li>
+                <li class="camp-card">
+                  <img
+                    class="camp-card__media"
+                    src="assets/img/camping/dog-camping.webp"
+                    width="1200"
+                    height="800"
+                    alt="Le chien au camping Les 2 Vallées"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p class="camp-card__caption">Le chien du camping</p>
+                </li>
+                <li class="camp-card">
+                  <img
+                    class="camp-card__media"
+                    src="assets/img/camping/jeux.webp"
+                    width="1200"
+                    height="800"
+                    alt="L'espace jeux pour enfants du camping"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p class="camp-card__caption">L'espace jeux pour enfants</p>
+                </li>
+                <li class="camp-card">
+                  <img
+                    class="camp-card__media"
+                    src="assets/img/camping/resto.webp"
+                    width="1200"
+                    height="800"
+                    alt="La restauration du camping Les 2 Vallées"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p class="camp-card__caption">La restauration</p>
+                </li>
+                <li class="camp-card">
+                  <img
+                    class="camp-card__media"
+                    src="assets/img/camping/plan-camping-deux-vallees-1_resultat.webp"
+                    width="1200"
+                    height="800"
+                    alt="Le plan du camping Les 2 Vallées"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p class="camp-card__caption">Le plan du camping</p>
+                </li>
+                <li class="camp-card">
+                  <img
+                    class="camp-card__media"
+                    src="assets/img/camping/gorges-du-tarn.webp"
+                    width="1200"
+                    height="800"
+                    alt="Les Gorges du Tarn, à proximité du camping"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p class="camp-card__caption">Les Gorges du Tarn</p>
+                </li>
+              </ul>
+            </div>
+
+            <div class="slider__nav camping__nav">
+              <button
+                class="slider__arrow"
+                id="prevCamp"
+                type="button"
+                aria-label="Photo précédente"
+                data-i18n-attr="aria-label:js.campPrev"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M15 6l-6 6 6 6"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+              <div
+                class="slider__dots"
+                id="campDots"
+                role="group"
+                aria-label="Choisir la photo"
+                data-i18n-attr="aria-label:campGallery.dotsAria"
+              ></div>
+              <button
+                class="slider__arrow"
+                id="nextCamp"
+                type="button"
+                aria-label="Photo suivante"
+                data-i18n-attr="aria-label:js.campNext"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M9 6l6 6-6 6"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== BLOCS ALTERNÉS ===================== -->
+
+      <div class="container features__head">
+        <span class="badge badge--yellow reveal" data-i18n="feat.badge"
+          >Nos Prestations</span
+        >
+      </div>
+      <section class="section features" id="prestation">
+        <div class="container">
+          <article class="feature reveal" id="piscines">
+            <img
+              class="feature__media img img--pool"
+              src="assets/img/piscine.webp"
+              srcset="
+                assets/img/piscine-560.webp  560w,
+                assets/img/piscine.webp     1200w
+              "
+              sizes="(max-width: 639px) 88vw, 640px"
+              width="1200"
+              height="900"
+              alt="Piscines en pleine nature"
+              loading="lazy"
+              decoding="async"
+              data-i18n-attr="alt:f1.media"
+            />
+            <div class="feature__body">
+              <span class="badge badge--blue" data-i18n="f1.badge"
+                >Piscine</span
+              >
+              <h2 class="feature__title" data-i18n="f1.title">
+                Dive into the blue
+              </h2>
+              <p data-i18n="f1.p">
+                De mai à septembre, la piscine du camping est ouverte de 9h30 à
+                20h30. Des chaises longues sont à votre disposition pour
+                profiter pleinement du soleil et de moments de détente au bord
+                de l’eau.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature feature--reverse reveal" id="restauration">
+            <div class="feature__media img" aria-hidden="true">
+              <!-- Photo en <img> lazy ; le grain (motif de points) est fourni
+                   par le ::after de .img sur le wrapper — rendu identique.
+                   (Un <img> seul ne porte pas de ::after.) -->
+              <img
+                class="media-fill"
+                src="assets/img/prestaSplit.webp"
+                width="1152"
+                height="928"
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="feature__body">
+              <span class="badge badge--red" data-i18n="f2.badge"
+                >Emplacements</span
+              >
+              <h2 class="feature__title" data-i18n="f2.title">Au grand air</h2>
+              <p data-i18n="f2.p">
+                Nous vous proposons des emplacements vide, tente, Mobil-home et
+                Chalet
+              </p>
+            </div>
+          </article>
+
+          <article class="feature reveal" id="animaux">
+            <img
+              class="feature__media img img--pet"
+              src="assets/img/dog-camping.webp"
+              srcset="
+                assets/img/dog-camping-560.webp 560w,
+                assets/img/dog-camping.webp     666w
+              "
+              sizes="(max-width: 639px) 88vw, 640px"
+              width="1200"
+              height="900"
+              alt="Chien assis dans l'herbe à côté d'une tente verte"
+              loading="lazy"
+              decoding="async"
+              data-i18n-attr="alt:f3.media"
+            />
+            <div class="feature__body">
+              <span class="badge badge--green" data-i18n="f3.badge"
+                >Pet friendly</span
+              >
+              <h2 class="feature__title" data-i18n="f3.title">
+                Nous aimons les animaux&nbsp;!
+              </h2>
+              <p data-i18n="f3.p">
+                Vos amis à quatre pattes peuvent partager la magie de la nature
+                avec vous, en toute sécurité.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature feature--reverse reveal" id="resto">
+            <img
+              class="feature__media img img--resto"
+              src="assets/img/resto.webp"
+              width="1200"
+              height="900"
+              alt="Terrasse du snack et produits du terroir"
+              loading="lazy"
+              decoding="async"
+              data-i18n-attr="alt:f4.media"
+            />
+            <div class="feature__body">
+              <span class="badge badge--yellow" data-i18n="f4.badge"
+                >Restauration</span
+              >
+              <h2 class="feature__title" data-i18n="f4.title">
+                Au coin gourmand
+              </h2>
+              <p data-i18n="f4.p">
+                Snack, glaces et produits du terroir&nbsp;: de quoi se régaler
+                sans quitter le camping. Service en salle ou en terrasse, à
+                l'ombre des vallées.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature reveal" id="jeux">
+            <img
+              class="feature__media img img--games"
+              src="assets/img/jeux.webp"
+              width="1200"
+              height="900"
+              alt="Aire de jeux en plein air"
+              loading="lazy"
+              decoding="async"
+              data-i18n-attr="alt:f5.media"
+            />
+            <div class="feature__body">
+              <span class="badge badge--blue" data-i18n="f5.badge">Jeux</span>
+              <h2 class="feature__title" data-i18n="f5.title">
+                Espace de jeux en plein air
+              </h2>
+              <p data-i18n="f5.p">
+                Toboggan, balançoires, table de ping-pong et terrain de
+                pétanque&nbsp;: les enfants s'éclatent pendant que les grands
+                soufflent.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature feature--reverse reveal" id="campingcar">
+            <img
+              class="feature__media img img--service"
+              src="assets/img/emplacement.webp"
+              width="1200"
+              height="900"
+              alt="Aire de service pour camping-cars"
+              loading="lazy"
+              decoding="async"
+              data-i18n-attr="alt:f6.media"
+            />
+            <div class="feature__body">
+              <span class="badge badge--red" data-i18n="f6.badge"
+                >Camping-car</span
+              >
+              <h2 class="feature__title" data-i18n="f6.title">
+                Aire de camping-car
+              </h2>
+              <p data-i18n="f6.p">
+                Borne de service, vidange, eau et électricité&nbsp;: tout est
+                prévu pour les camping-cars. Des emplacements plats, spacieux et
+                accessibles.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===================== RÉGION DECK (mazzo-carte) : photos gauche / texte droite — 5 sites d'Aveyron ===================== -->
+      <section class="section deck" id="region">
+        <div class="container">
+          <div class="section__head reveal">
+            <span class="badge badge--blue" data-i18n="region.badge"
+              >Région</span
+            >
+            <h2 class="section__title" data-i18n="region.title">
+              Les grands sites autour de Nant
+            </h2>
+            <p class="lead" data-i18n="region.lead">
+              À moins d'une heure du camping, l'Aveyron déploie ses plus beaux
+              sites.
+            </p>
+          </div>
+
+          <div class="deck__layout">
+            <!-- Colonne PHOTOS (gauche) : cartes sticky pivotées qui s'empilent -->
+            <div class="deck__stack">
+              <figure class="deck__card deck__card--0" data-index="0">
+                <img
+                  class="img img--region1"
+                  src="assets/img/viaduc-de-millau.webp"
+                  width="1000"
+                  height="1250"
+                  alt="Le viaduc de Millau dominant la vallée du Tarn"
+                  loading="lazy"
+                  decoding="async"
+                  data-i18n-attr="alt:r1.aria"
+                />
+              </figure>
+              <figure class="deck__card deck__card--1" data-index="1">
+                <img
+                  class="img img--region2"
+                  src="assets/img/gorges-du-tarn.webp"
+                  width="1000"
+                  height="1250"
+                  alt="Le village de Castelbouc accroché à la falaise des gorges du Tarn"
+                  loading="lazy"
+                  decoding="async"
+                  data-i18n-attr="alt:r2.aria"
+                />
+              </figure>
+              <figure class="deck__card deck__card--2" data-index="2">
+                <img
+                  class="img img--region3"
+                  src="assets/img/la-couvertoirade.webp"
+                  width="1000"
+                  height="1250"
+                  alt="Les remparts et le château de La Couvertoirade"
+                  loading="lazy"
+                  decoding="async"
+                  data-i18n-attr="alt:r3.aria"
+                />
+              </figure>
+              <figure class="deck__card deck__card--3" data-index="3">
+                <img
+                  class="img img--region4"
+                  src="assets/img/cite-de-pierres.webp"
+                  width="1000"
+                  height="1250"
+                  alt="La Porte de Mycène, dans le chaos de Montpellier-le-Vieux"
+                  loading="lazy"
+                  decoding="async"
+                  data-i18n-attr="alt:r4.aria"
+                />
+              </figure>
+              <figure class="deck__card deck__card--4" data-index="4">
+                <img
+                  class="img img--region5"
+                  src="assets/img/caves-roquefort.webp"
+                  width="1000"
+                  height="1250"
+                  alt="Galerie d'affinage des caves de Roquefort"
+                  loading="lazy"
+                  decoding="async"
+                  data-i18n-attr="alt:r5.aria"
+                />
+              </figure>
+            </div>
+
+            <!-- Colonne TEXTE (droite) : légendes en flux normal, synchronisées avec les photos -->
+            <div class="deck__captions">
+              <article class="deck__caption" data-index="0">
+                <span class="deck__caption-num">01</span>
+                <h3 class="deck__caption-title" data-i18n="r1.title">
+                  Le viaduc de Millau
+                </h3>
+                <p data-i18n="r1.p">
+                  Posé à 343&nbsp;m au-dessus du Tarn, le viaduc de Millau est
+                  l'ouvrage le plus spectaculaire d'Aveyron. On l'admire depuis
+                  l'aire de vision et son belvédère, gratuits et ouverts toute
+                  l'année.
+                </p>
+                <span class="deck__caption-time" data-i18n="r1.time"
+                  >˜ 35 min de Nant</span
+                >
+                <span class="deck__caption-credit"
+                  >Photo&nbsp;: Imac.vincent — domaine public, Wikimedia
+                  Commons</span
+                >
+              </article>
+              <article class="deck__caption" data-index="1">
+                <span class="deck__caption-num">02</span>
+                <h3 class="deck__caption-title" data-i18n="r2.title">
+                  Les gorges du Tarn
+                </h3>
+                <p data-i18n="r2.p">
+                  Le Tarn a creusé ici l'un des plus longs canyons d'Europe.
+                  Routes de corniche, belvédères vertigineux et villages
+                  accrochés à la falaise&nbsp;: le grand spectacle du Causse.
+                </p>
+                <span class="deck__caption-time" data-i18n="r2.time"
+                  >˜ 55 min de Nant</span
+                >
+                <span class="deck__caption-credit"
+                  >Photo&nbsp;: Myrabella — CC BY-SA 3.0, Wikimedia
+                  Commons</span
+                >
+              </article>
+              <article class="deck__caption" data-index="2">
+                <span class="deck__caption-num">03</span>
+                <h3 class="deck__caption-title" data-i18n="r3.title">
+                  La Couvertoirade
+                </h3>
+                <p data-i18n="r3.p">
+                  Cité templière du XIIe&nbsp;siècle posée sur le causse du
+                  Larzac, elle a gardé ses remparts, son château et ses ruelles
+                  pavées. Un des Plus Beaux Villages de France, inscrit à
+                  l'UNESCO.
+                </p>
+                <span class="deck__caption-time" data-i18n="r3.time"
+                  >˜ 30 min de Nant</span
+                >
+                <span class="deck__caption-credit"
+                  >Photo&nbsp;: Myrabella — CC BY-SA 3.0, Wikimedia
+                  Commons</span
+                >
+              </article>
+              <article class="deck__caption" data-index="3">
+                <span class="deck__caption-num">04</span>
+                <h3 class="deck__caption-title" data-i18n="r4.title">
+                  La Cité de Pierres
+                </h3>
+                <p data-i18n="r4.p">
+                  Sur le causse Noir, l'érosion a sculpté une ville de pierre
+                  &nbsp;: arches, remparts et figures géantes. On l'explore à
+                  pied, ou en petit train touristique.
+                </p>
+                <span class="deck__caption-time" data-i18n="r4.time"
+                  >˜ 50 min de Nant</span
+                >
+                <span class="deck__caption-credit"
+                  >Photo&nbsp;: Benh Lieu Song — CC BY-SA 3.0, Wikimedia
+                  Commons</span
+                >
+              </article>
+              <article class="deck__caption" data-index="4">
+                <span class="deck__caption-num">05</span>
+                <h3 class="deck__caption-title" data-i18n="r5.title">
+                  Les caves de Roquefort
+                </h3>
+                <p data-i18n="r5.p">
+                  Dans les entrailles du Combalou, à 10&nbsp;°C toute l'année,
+                  s'affinent les célèbres fromages. La visite guidée des caves
+                  Société se termine par une dégustation.
+                </p>
+                <span class="deck__caption-time" data-i18n="r5.time"
+                  >˜ 30 min de Nant</span
+                >
+                <span class="deck__caption-credit"
+                  >Photo&nbsp;: Daniel Villafruela — CC BY-SA 3.0, Wikimedia
+                  Commons</span
+                >
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SECTION VAGUE (remplace vidéo) ===================== -->
+      <section class="wave" id="emplacements" data-theme="dark">
+        <div class="wave__media kenburns" aria-hidden="true"></div>
+        <div class="wave__overlay" aria-hidden="true"></div>
+        <svg
+          class="wave__shape"
+          viewBox="0 0 1440 120"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M0,64L60,69.3C120,75,240,85,360,80C480,75,600,53,720,53.3C840,53,960,75,1080,80C1200,85,1320,75,1380,69.3L1440,64V120H0Z"
+            fill="#D6EAEF"
+          />
+        </svg>
+        <div class="container wave__content">
+          <h2 class="wave__title reveal" data-i18n="wave.title">
+            Le village au départ des sentiers
+          </h2>
+          <p class="wave__text reveal" data-i18n="wave.text">
+            Au départ du village, 8 boucles balisées dans les Grands Causses :
+            de la promenade en famille le long de la Dourbie à la grande journée
+            sur le plateau du Larzac.
+          </p>
+          <div class="wave__actions reveal">
+            <button
+              type="button"
+              class="btn btn--accent wave__toggle"
+              id="wave-hikes-toggle"
+              aria-expanded="false"
+              aria-controls="wave-hikes"
+              data-i18n="wave.cta"
+            >
+              Voir les randonnées
+            </button>
+          </div>
+
+          <!-- Panneau dépliable "topo-guide" : 8 boucles au départ de Nant,
+               reliées par la ligne de sentier. Une seule fiche dépliée via
+               "En savoir plus" (accordéon), sans aucun lien externe.
+               Sibling du bouton : le bouton ne bouge jamais à l'ouverture. -->
+          <div
+            class="wave__hikes"
+            id="wave-hikes"
+            aria-hidden="true"
+            data-i18n-attr="aria-label:wave.hikesLabel"
+          >
+            <div class="wave__hikes-inner">
+              <div class="wave__hikes-panel">
+                <h3 class="wave__hikes-title" data-i18n="wave.hikesTitle">
+                  Randonnées au départ du village de Nant
+                </h3>
+                <p class="wave__hikes-intro" data-i18n="wave.hikesIntro">
+                  8 boucles balisées au départ de Nant.
+                </p>
+                <ul class="wave__hikes-list">
+                  <li class="wave__hike wave__hike--tvert">
+                    <span class="wave__hike-dot" aria-hidden="true"></span>
+                    <span class="wave__hike-name"
+                      >Boucle de la vallée de la Dourbie</span
+                    >
+                    <span class="wave__hike-meta"
+                      >3,3 km · 1 h 15 · +119 m</span
+                    >
+                    <button
+                      type="button"
+                      class="wave__hike-more"
+                      aria-expanded="false"
+                      aria-controls="hike-d1"
+                      data-i18n="wave.more"
+                    >
+                      En savoir plus
+                    </button>
+                    <div class="wave__hike-card" id="hike-d1">
+                      <div class="wave__hike-card-inner">
+                        <p
+                          class="wave__hike-card-level wave__hike-level--vert"
+                          data-i18n="wave.lvl1"
+                        >
+                          Niveau : Facile
+                        </p>
+                        <p class="wave__hike-desc" data-i18n="wave.d1">
+                          Promenade douce le long de la Dourbie, adaptée aux
+                          familles. Le sentier suit la rivière et revient par
+                          les ruelles du village.
+                        </p>
+                        <p class="wave__hike-tip" data-i18n="wave.t1">
+                          Ombre l'après-midi — départ face à la halle.
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="wave__hike wave__hike--tvert">
+                    <span class="wave__hike-dot" aria-hidden="true"></span>
+                    <span class="wave__hike-name"
+                      >Promenade des gorges de la Dourbie</span
+                    >
+                    <span class="wave__hike-meta">5 km · 1 h 45 · +150 m</span>
+                    <button
+                      type="button"
+                      class="wave__hike-more"
+                      aria-expanded="false"
+                      aria-controls="hike-d2"
+                      data-i18n="wave.more"
+                    >
+                      En savoir plus
+                    </button>
+                    <div class="wave__hike-card" id="hike-d2">
+                      <div class="wave__hike-card-inner">
+                        <p
+                          class="wave__hike-card-level wave__hike-level--vert"
+                          data-i18n="wave.lvl1"
+                        >
+                          Niveau : Facile
+                        </p>
+                        <p class="wave__hike-desc" data-i18n="wave.d2">
+                          Premiers regards sur les gorges en aval du village :
+                          le sentier descend vers la rivière puis remonte sur le
+                          causse par une piste ombragée.
+                        </p>
+                        <p class="wave__hike-tip" data-i18n="wave.t2">
+                          Bon point de baignade selon la saison.
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="wave__hike wave__hike--tbleu">
+                    <span class="wave__hike-dot" aria-hidden="true"></span>
+                    <span class="wave__hike-name">Le Roc Nantais</span>
+                    <span class="wave__hike-meta"
+                      >12,8 km · 4 h 30 · +400 m</span
+                    >
+                    <button
+                      type="button"
+                      class="wave__hike-more"
+                      aria-expanded="false"
+                      aria-controls="hike-d3"
+                      data-i18n="wave.more"
+                    >
+                      En savoir plus
+                    </button>
+                    <div class="wave__hike-card" id="hike-d3">
+                      <div class="wave__hike-card-inner">
+                        <p
+                          class="wave__hike-card-level wave__hike-level--bleu"
+                          data-i18n="wave.lvl2"
+                        >
+                          Niveau : Moyen
+                        </p>
+                        <p class="wave__hike-desc" data-i18n="wave.d3">
+                          Le grand classique nantais. Passage par le pont
+                          médiéval de la Prade, montée au belvédère du Roc
+                          Nantais et vue plongeante sur la vallée de la Dourbie.
+                        </p>
+                        <p class="wave__hike-tip" data-i18n="wave.t3">
+                          Partir tôt : le plateau est exposé après midi.
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="wave__hike wave__hike--tbleu">
+                    <span class="wave__hike-dot" aria-hidden="true"></span>
+                    <span class="wave__hike-name"
+                      >Corniches du Cernon (boucle)</span
+                    >
+                    <span class="wave__hike-meta">10 km · 3 h 30 · +350 m</span>
+                    <button
+                      type="button"
+                      class="wave__hike-more"
+                      aria-expanded="false"
+                      aria-controls="hike-d4"
+                      data-i18n="wave.more"
+                    >
+                      En savoir plus
+                    </button>
+                    <div class="wave__hike-card" id="hike-d4">
+                      <div class="wave__hike-card-inner">
+                        <p
+                          class="wave__hike-card-level wave__hike-level--bleu"
+                          data-i18n="wave.lvl2"
+                        >
+                          Niveau : Moyen
+                        </p>
+                        <p class="wave__hike-desc" data-i18n="wave.d4">
+                          Sentiers suspendus au-dessus des gorges du Cernon,
+                          entre prairies calcaires et falaises. Retour par le
+                          plateau.
+                        </p>
+                        <p class="wave__hike-tip" data-i18n="wave.t4">
+                          Attention au vent sur les corniches.
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="wave__hike wave__hike--trouge">
+                    <span class="wave__hike-dot" aria-hidden="true"></span>
+                    <span class="wave__hike-name"
+                      >Les Causses du Larzac (sentier découverte)</span
+                    >
+                    <span class="wave__hike-meta">15 km · 4 h · +353 m</span>
+                    <button
+                      type="button"
+                      class="wave__hike-more"
+                      aria-expanded="false"
+                      aria-controls="hike-d5"
+                      data-i18n="wave.more"
+                    >
+                      En savoir plus
+                    </button>
+                    <div class="wave__hike-card" id="hike-d5">
+                      <div class="wave__hike-card-inner">
+                        <p
+                          class="wave__hike-card-level wave__hike-level--rouge"
+                          data-i18n="wave.lvl3"
+                        >
+                          Niveau : Sportif
+                        </p>
+                        <p class="wave__hike-desc" data-i18n="wave.d5">
+                          Traversée du Causse du Larzac au fil des landes et du
+                          buis, jusqu'au hameau d'Egalières et à la forêt
+                          domaniale.
+                        </p>
+                        <p class="wave__hike-tip" data-i18n="wave.t5">
+                          Emporter de l'eau : aucun point sur le causse.
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="wave__hike wave__hike--trouge">
+                    <span class="wave__hike-dot" aria-hidden="true"></span>
+                    <span class="wave__hike-name"
+                      >Cirque de Tournemire et plateau du Larzac</span
+                    >
+                    <span class="wave__hike-meta">16 km · 5 h · +500 m</span>
+                    <button
+                      type="button"
+                      class="wave__hike-more"
+                      aria-expanded="false"
+                      aria-controls="hike-d6"
+                      data-i18n="wave.more"
+                    >
+                      En savoir plus
+                    </button>
+                    <div class="wave__hike-card" id="hike-d6">
+                      <div class="wave__hike-card-inner">
+                        <p
+                          class="wave__hike-card-level wave__hike-level--rouge"
+                          data-i18n="wave.lvl3"
+                        >
+                          Niveau : Sportif
+                        </p>
+                        <p class="wave__hike-desc" data-i18n="wave.d6">
+                          Boucle vers le cirque de Tournemire : maisons
+                          templiers, sources et avens du plateau du Larzac, avec
+                          de larges vues au passage des crêtes.
+                        </p>
+                        <p class="wave__hike-tip" data-i18n="wave.t6">
+                          Visite du cirque possible en variante courte.
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="wave__hike wave__hike--tnoir">
+                    <span class="wave__hike-dot" aria-hidden="true"></span>
+                    <span class="wave__hike-name"
+                      >GR® 71 — Chemin des Templiers et Hospitaliers
+                      (étape)</span
+                    >
+                    <span class="wave__hike-meta"
+                      >8 à 22 km · 1 jour · +600 m</span
+                    >
+                    <button
+                      type="button"
+                      class="wave__hike-more"
+                      aria-expanded="false"
+                      aria-controls="hike-d7"
+                      data-i18n="wave.more"
+                    >
+                      En savoir plus
+                    </button>
+                    <div class="wave__hike-card" id="hike-d7">
+                      <div class="wave__hike-card-inner">
+                        <p
+                          class="wave__hike-card-level wave__hike-level--tnoir"
+                          data-i18n="wave.lvl4"
+                        >
+                          Niveau : Expert
+                        </p>
+                        <p class="wave__hike-desc" data-i18n="wave.d7">
+                          Une étape du Chemin des Templiers et Hospitaliers au
+                          balisage blanc-rouge, au choix sur 8 à 22 km selon
+                          l'horaire et le niveau du groupe.
+                        </p>
+                        <p class="wave__hike-tip" data-i18n="wave.t7">
+                          Topo-guide vendu à l'office de tourisme de Nant.
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="wave__hike wave__hike--tnoir">
+                    <span class="wave__hike-dot" aria-hidden="true"></span>
+                    <span class="wave__hike-name"
+                      >Nant – Roc Nantais – Saint-Jean-du-Bruel</span
+                    >
+                    <span class="wave__hike-meta">20,6 km · 6 h · +821 m</span>
+                    <button
+                      type="button"
+                      class="wave__hike-more"
+                      aria-expanded="false"
+                      aria-controls="hike-d8"
+                      data-i18n="wave.more"
+                    >
+                      En savoir plus
+                    </button>
+                    <div class="wave__hike-card" id="hike-d8">
+                      <div class="wave__hike-card-inner">
+                        <p
+                          class="wave__hike-card-level wave__hike-level--tnoir"
+                          data-i18n="wave.lvl4"
+                        >
+                          Niveau : Expert
+                        </p>
+                        <p class="wave__hike-desc" data-i18n="wave.d8">
+                          La grande journée : le belvédère du Roc Nantais, la
+                          vallée de la Dourbie et l'arrivée à
+                          Saint-Jean-du-Bruel, restaurants et fontaines à
+                          l'arrivée.
+                        </p>
+                        <p class="wave__hike-tip" data-i18n="wave.t8">
+                          Pique-nique dans le sac, départ à la première heure.
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- ===================== SLIDER NOS LOCATIONS (photo active agrandie) ===================== -->
+      <section class="section locations" id="locations">
+        <div class="container">
+          <div class="section__head reveal">
+            <span class="badge badge--yellow" data-i18n="loc.badge"
+              >Nos locations</span
+            >
+            <h2 class="section__title" data-i18n="loc.title">
+              Choisissez la solution qui vous convient
+            </h2>
+          </div>
+        </div>
+
+        <div
+          class="slider locations__slider"
+          id="locationsSlider"
+          tabindex="0"
+          role="region"
+          aria-label="Carrousel des locations"
+          aria-roledescription="carrousel"
+          data-i18n-attr="aria-label:loc.sliderAria, aria-roledescription:js.role"
+        >
+          <div class="slider__viewport locations__viewport">
+            <ul class="slider__track locations__track" id="locationsTrack">
+              <li class="loc-card">
+                <img
+                  class="loc-card__media img img--offer1"
+                  src="assets/img/locations/location-chalet.webp"
+                  width="627"
+                  height="527"
+                  alt="Chalet Sélection"
+                  loading="lazy"
+                  decoding="async"
+                  data-i18n-attr="alt:l1.aria"
+                />
+                <div class="loc-card__body">
+                  <h3 class="loc-card__title" data-i18n="l1.title">
+                    Chalet Sélection 1 à 4 Personnes
+                  </h3>
+                  <p class="loc-card__meta" data-i18n="l1.meta">
+                    2 chambres - Lave-Vaisselle - TV <br />
+                    Terrasse couverte 12m² <br />
+                    à partir de <strong>46&nbsp;€</strong> / nuit
+                  </p>
+                  <a
+                    href="#locations"
+                    class="btn btn--outline btn--sm"
+                    data-i18n="loc.book"
+                    >Réserver</a
+                  >
+                </div>
+              </li>
+              <li class="loc-card">
+                <img
+                  class="loc-card__media img img--offer2"
+                  src="assets/img/locations/location-cosy-2ch.webp"
+                  width="627"
+                  height="527"
+                  alt="Mobil-home Cosy 2 chambres"
+                  loading="lazy"
+                  decoding="async"
+                  data-i18n-attr="alt:l2.aria"
+                />
+                <div class="loc-card__body">
+                  <h3 class="loc-card__title" data-i18n="l2.title">
+                    Mobil-home Classic 1 à 5 Personnes
+                  </h3>
+                  <p class="loc-card__meta" data-i18n="l2.meta">
+                    2 chambres - Terrasse 12m² <br />
+                    TV - Superficie 26m² <br />
+                    à partir de <strong>35&nbsp;€</strong> / nuit
+                  </p>
+                  <a
+                    href="#locations"
+                    class="btn btn--outline btn--sm"
+                    data-i18n="loc.book"
+                    >Réserver</a
+                  >
+                </div>
+              </li>
+              <li class="loc-card">
+                <img
+                  class="loc-card__media img img--offer3"
+                  src="assets/img/locations/enmplacement.webp"
+                  width="619"
+                  height="400"
+                  alt="Emplacement de camping avec un camping-car et son auvent"
+                  loading="lazy"
+                  decoding="async"
+                  data-i18n-attr="alt:l3.aria"
+                />
+                <div class="loc-card__body">
+                  <h3 class="loc-card__title" data-i18n="l3.title">
+                    Emplacement Nature 1 à 6 Personnes
+                  </h3>
+                  <p class="loc-card__meta" data-i18n="l3.meta">
+                    Tente, caravane ou camping-car<br />
+                    Environ 100m² <br />
+                    à partir de <strong>13,30&nbsp;€</strong> / nuit
+                  </p>
+                  <a
+                    href="#locations"
+                    class="btn btn--outline btn--sm"
+                    data-i18n="loc.book"
+                    >Réserver</a
+                  >
+                </div>
+              </li>
+              <li class="loc-card">
+                <img
+                  class="loc-card__media img img--offer3"
+                  src="assets/img/locations/emplacement_confort.webp"
+                  width="619"
+                  height="400"
+                  alt="Emplacement de camping avec un camping-car et son auvent"
+                  loading="lazy"
+                  decoding="async"
+                  data-i18n-attr="alt:l3.aria"
+                />
+                <div class="loc-card__body">
+                  <h3 class="loc-card__title" data-i18n="l4.title">
+                    Emplacement Confort 1 à 6 Personnes
+                  </h3>
+                  <p class="loc-card__meta" data-i18n="l4.meta">
+                    Tente, caravane ou camping-car<br />
+                    Electricité 10A - Environ 100m² <br />
+                    à partir de <strong>13,30&nbsp;€</strong> / nuit
+                  </p>
+                  <a
+                    href="#locations"
+                    class="btn btn--outline btn--sm"
+                    data-i18n="loc.book"
+                    >Réserver</a
+                  >
+                </div>
+              </li>
+              <li class="loc-card">
+                <img
+                  class="loc-card__media img img--insta3"
+                  src="assets/img/locations/cabane_robinson.webp"
+                  width="619"
+                  height="646"
+                  alt="Tente safari"
+                  loading="lazy"
+                  decoding="async"
+                  data-i18n-attr="alt:l5.aria"
+                />
+                <div class="loc-card__body">
+                  <h3 class="loc-card__title" data-i18n="l5.title">
+                    Cabane ROBINSON 1 à 5 Personnes
+                  </h3>
+                  <p class="loc-card__meta" data-i18n="l5.meta">
+                    2 chambres - Sans sanitaires<br />
+                    Environ 21m² <br />
+                    à partir de <strong>29&nbsp;€</strong> / nuit
+                  </p>
+                  <a
+                    href="#locations"
+                    class="btn btn--outline btn--sm"
+                    data-i18n="loc.book"
+                    >Réserver</a
+                  >
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="slider__nav container">
+            <button
+              class="slider__arrow"
+              id="prevLoc"
+              aria-label="Location précédente"
+              data-i18n-attr="aria-label:loc.prev"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M15 6l-6 6 6 6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            <div
+              class="slider__dots"
+              id="locDots"
+              role="group"
+              aria-label="Navigation des locations"
+              data-i18n-attr="aria-label:loc.dotsAria"
+            ></div>
+            <button
+              class="slider__arrow"
+              id="nextLoc"
+              aria-label="Location suivante"
+              data-i18n-attr="aria-label:loc.next"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="20"
+                height="20"
+                aria-hidden="true"
+              >
+                <path
+                  d="M9 6l6 6-6 6"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== HISTOIRE / DOMAINE (alternance) ===================== -->
+      <section class="section history" id="decouvrir">
+        <div
+          class="container history__inner history__inner--swap"
+          data-swap-root
+        >
+          <!-- Panneau A : Notre histoire (défaut) -->
+          <div class="swap-panel is-active" data-panel="histoire">
+            <img
+              class="history__media img img--history reveal"
+              src="assets/img/pro.webp"
+              width="1200"
+              height="1600"
+              alt="Le village et la vallée"
+              loading="lazy"
+              decoding="async"
+              data-i18n-attr="alt:hist.aria"
+            />
+            <div class="history__body reveal">
+              <span class="badge badge--red" data-i18n="hist.badge"
+                >Notre histoire</span
+              >
+              <h2 class="section__title" data-i18n="hist.title">
+                En nature depuis 1969
+              </h2>
+              <p data-i18n="hist.p1">
+                Le Camping Les 2 Vallées est né de l'amour d'une famille pour la
+                nature. Au fil des décennies, la structure s'est développée en
+                symbiose avec le territoire, conservant cet esprit d'ouverture
+                et de respect du vivant.
+              </p>
+              <p data-i18n="hist.p2">
+                Aujourd'hui encore, porté par de nombreuses innovations en
+                matière d'hébergement, le camping est une étape fixe pour ceux
+                qui veulent régénérer leur corps et leur esprit.
+              </p>
+            </div>
+            <div class="swap-panel__actions">
+              <button
+                type="button"
+                class="btn btn--outline"
+                data-i18n="hist.cta"
+                data-swap="domaine"
+              >
+                Découvrir le domaine
+              </button>
+            </div>
+          </div>
+
+          <!-- Panneau B : Le domaine (plan + texte) -->
+          <div class="swap-panel" data-panel="domaine" aria-hidden="true">
+            <img
+              class="history__media img img--history img--plan"
+              src="assets/img/plan-camping-deux-vallees-1_resultat.webp"
+              width="1200"
+              height="900"
+              alt="Plan du camping Les 2 Vallées"
+              loading="lazy"
+              decoding="async"
+              data-i18n-attr="alt:dom.aria"
+            />
+            <div class="history__body">
+              <span class="badge badge--green" data-i18n="dom.badge"
+                >Le domaine</span
+              >
+              <h2 class="section__title" data-i18n="dom.title">
+                Un domaine taillé par la nature
+              </h2>
+              <p data-i18n="dom.p1">
+                À cheval entre les vallées du Tarn et de la Dourbie, le domaine
+                déploie ses emplacements arborés, ses chalets et ses tentes
+                Safari sur un terrain vallonné où chaque emplacement garde son
+                ombre et sa tranquillité.
+              </p>
+              <p data-i18n="dom.p2">
+                Piscine chauffée, snack et petits-déjeuners maison, aire de
+                jeux, laverie et accueil wifi : tous les services d'un camping
+                ouvert toute l'année, à quelques pas des falaises de la Roque
+                Sainte Victoire. Le plan vous aide à vous repérer dès l'arrivée.
+              </p>
+            </div>
+            <div class="swap-panel__actions">
+              <button
+                type="button"
+                class="btn btn--outline"
+                data-i18n="hist.badge"
+                data-swap="histoire"
+              >
+                Notre histoire
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== INFOS PRATIQUES (documents à télécharger) =====================
+           Regroupe ici la future section Téléchargements (elle-même ancrée
+           #informations) et la section Paiement juste en dessous : un seul
+           lien de nav « Infos » couvre les deux. Les 4 liens ci-dessous sont
+           des PLACEHOLDERS (href="#") : ils pointeront plus tard vers les PDF
+           réels (contrat, plan, règlement, conditions générales). -->
+      <section
+        class="payments payments--docs"
+        id="informations"
+        aria-labelledby="infos-title"
+      >
+        <div class="container">
+          <div class="payments__head reveal">
+            <span class="badge badge--cyan" data-i18n="infos.badge"
+              >Infos pratiques</span
+            >
+            <h2
+              class="payments__title"
+              id="infos-title"
+              data-i18n="infos.title"
+            >
+              Documents &amp; informations
+            </h2>
+            <p class="payments__lead" data-i18n="infos.lead">
+              Téléchargez tout ce qu'il faut savoir avant votre séjour.
+            </p>
+          </div>
+
+          <ul class="payments__grid">
+            <li class="payments__item reveal">
+              <!-- PLACEHOLDER : remplacer href par le PDF du contrat. -->
+              <a
+                class="payments__item-inner payments__item--doc"
+                href="#"
+                download
+              >
+                <span
+                  class="payments__icon payments__icon--doc"
+                  aria-hidden="true"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="26"
+                    height="26"
+                    fill="none"
+                    focusable="false"
+                  >
+                    <path
+                      d="M12 4.5v10m0 0 4.25-4.25M12 14.5l-4.25-4.25M4.5 19.25h15"
+                      stroke="currentColor"
+                      stroke-width="1.75"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <span class="payments__label" data-i18n="docs.contract"
+                  >Contrat de réservation</span
+                >
+              </a>
+            </li>
+
+            <li class="payments__item reveal">
+              <!-- PLACEHOLDER : remplacer href par le PDF du plan. -->
+              <a
+                class="payments__item-inner payments__item--doc"
+                href="#"
+                download
+              >
+                <span
+                  class="payments__icon payments__icon--doc"
+                  aria-hidden="true"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="26"
+                    height="26"
+                    fill="none"
+                    focusable="false"
+                  >
+                    <path
+                      d="M12 4.5v10m0 0 4.25-4.25M12 14.5l-4.25-4.25M4.5 19.25h15"
+                      stroke="currentColor"
+                      stroke-width="1.75"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <span class="payments__label" data-i18n="docs.plan"
+                  >Plan du camping</span
+                >
+              </a>
+            </li>
+
+            <li class="payments__item reveal">
+              <!-- PLACEHOLDER : remplacer href par le PDF du règlement. -->
+              <a
+                class="payments__item-inner payments__item--doc"
+                href="#"
+                download
+              >
+                <span
+                  class="payments__icon payments__icon--doc"
+                  aria-hidden="true"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="26"
+                    height="26"
+                    fill="none"
+                    focusable="false"
+                  >
+                    <path
+                      d="M12 4.5v10m0 0 4.25-4.25M12 14.5l-4.25-4.25M4.5 19.25h15"
+                      stroke="currentColor"
+                      stroke-width="1.75"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <span class="payments__label" data-i18n="docs.rules"
+                  >Règlement intérieur</span
+                >
+              </a>
+            </li>
+
+            <li class="payments__item reveal">
+              <!-- PLACEHOLDER : remplacer href par le PDF des conditions. -->
+              <a
+                class="payments__item-inner payments__item--doc"
+                href="#"
+                download
+              >
+                <span
+                  class="payments__icon payments__icon--doc"
+                  aria-hidden="true"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="26"
+                    height="26"
+                    fill="none"
+                    focusable="false"
+                  >
+                    <path
+                      d="M12 4.5v10m0 0 4.25-4.25M12 14.5l-4.25-4.25M4.5 19.25h15"
+                      stroke="currentColor"
+                      stroke-width="1.75"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <span class="payments__label" data-i18n="docs.cg"
+                  >Conditions générales</span
+                >
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ===================== MOYENS DE PAIEMENT ===================== -->
+      <section class="payments" aria-labelledby="payments-title">
+        <div class="container">
+          <div class="payments__head reveal">
+            <span class="badge badge--green" data-i18n="pay.badge"
+              >Paiement</span
+            >
+            <h2
+              class="payments__title"
+              id="payments-title"
+              data-i18n="pay.title"
+            >
+              Moyens de paiement acceptés
+            </h2>
+            <p class="payments__lead" data-i18n="pay.lead">
+              Réglez votre séjour en toute simplicité.
+            </p>
+          </div>
+
+          <ul class="payments__grid">
+            <li class="payments__item reveal">
+              <span
+                class="payments__icon payments__icon--card"
+                aria-hidden="true"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="26"
+                  height="26"
+                  fill="none"
+                  focusable="false"
+                >
+                  <rect
+                    x="2.5"
+                    y="5.5"
+                    width="19"
+                    height="13"
+                    rx="2.5"
+                    stroke="currentColor"
+                    stroke-width="1.75"
+                  />
+                  <path
+                    d="M2.75 9.5h18.5"
+                    stroke="currentColor"
+                    stroke-width="1.75"
+                  />
+                  <rect
+                    x="5.25"
+                    y="12.25"
+                    width="4.5"
+                    height="3.5"
+                    rx="1"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M16.1 13.1c.7.75.7 2.05 0 2.8M18.5 11.8c1.4 1.5 1.4 3.9 0 5.4"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </span>
+              <span class="payments__label" data-i18n="pay.cb"
+                >Carte bancaire</span
+              >
+            </li>
+
+            <li class="payments__item reveal">
+              <span
+                class="payments__icon payments__icon--cheque"
+                aria-hidden="true"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="26"
+                  height="26"
+                  fill="none"
+                  focusable="false"
+                >
+                  <rect
+                    x="2.5"
+                    y="5.5"
+                    width="19"
+                    height="13"
+                    rx="2.5"
+                    stroke="currentColor"
+                    stroke-width="1.75"
+                  />
+                  <path
+                    d="M6 9.5h6.5M6 12.5h4"
+                    stroke="currentColor"
+                    stroke-width="1.75"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="m13.2 14.4 1.7 1.7 3.6-3.9"
+                    stroke="currentColor"
+                    stroke-width="1.9"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <span class="payments__label" data-i18n="pay.cheque"
+                >Chèque bancaire</span
+              >
+            </li>
+
+            <li class="payments__item reveal">
+              <span
+                class="payments__icon payments__icon--vacances"
+                aria-hidden="true"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="26"
+                  height="26"
+                  fill="none"
+                  focusable="false"
+                >
+                  <path
+                    d="M4 7.5h16v2.6a2 2 0 0 0 0 3.8v2.6H4v-2.6a2 2 0 0 0 0-3.8Z"
+                    stroke="currentColor"
+                    stroke-width="1.75"
+                    stroke-linejoin="round"
+                  />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="2.2"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M12 7.9v1.1M12 15v1.1M7.9 12h1.1M15 12h1.1"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </span>
+              <span class="payments__label" data-i18n="pay.vacances"
+                >Chèque-vacances</span
+              >
+            </li>
+
+            <li class="payments__item reveal">
+              <span
+                class="payments__icon payments__icon--transfer"
+                aria-hidden="true"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="26"
+                  height="26"
+                  fill="none"
+                  focusable="false"
+                >
+                  <path
+                    d="M3.5 8.25h13.25m-3.1-3.1 3.1 3.1-3.1 3.1"
+                    stroke="currentColor"
+                    stroke-width="1.75"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M20.5 15.75H7.25m3.1-3.1-3.1 3.1 3.1 3.1"
+                    stroke="currentColor"
+                    stroke-width="1.75"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <span class="payments__label" data-i18n="pay.virement"
+                >Virement bancaire</span
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="footer" data-theme="dark">
+      <div class="container footer__grid">
+        <div class="footer__brand">
+          <span class="logo logo--footer">
+            <span class="logo__mark" aria-hidden="true">
+              <img
+                src="assets/logo/camping-les-2-vallees.png"
+                alt=""
+                width="338"
+                height="192"
+                decoding="async"
+              />
+            </span>
+            <span class="logo__text"
+              ><strong>Camping</strong><em>Les 2 Vallées</em></span
+            >
+          </span>
+          <p data-i18n="foot.tag">
+            Nature, Camping &amp; détente au cœur des vallées.
+          </p>
+          <address class="footer__address">
+            Route de l'estrade basse<br />
+            12230 NANT<br />
+            FRANCE
+          </address>
+          <p class="footer__hours">
+            <span data-i18n="foot.hours">Horaires réception</span> : <br />
+            9h00 – 12h00 / 14h00 – 20h30
+          </p>
+        </div>
+
+        <nav class="footer__col" aria-label="Liens rapides">
+          <h3 data-i18n="foot.nav">Navigation</h3>
+          <ul>
+            <li><a href="#accueil" data-i18n="nav.accueil">Accueil</a></li>
+            <li>
+              <a href="#prestation" data-i18n="nav.prestations">Prestations</a>
+            </li>
+            <li><a href="#region" data-i18n="nav.region">Région</a></li>
+            <li>
+              <a href="#locations" data-i18n="loc.badge">Nos locations</a>
+            </li>
+            <li>
+              <a href="#decouvrir" data-i18n="hist.badge">Notre histoire</a>
+            </li>
+          </ul>
+        </nav>
+
+        <nav class="footer__col" aria-label="Prestations du camping">
+          <h3 data-i18n="nav.prestations">Prestations</h3>
+          <ul>
+            <li><a href="#piscines" data-i18n="f1.badge2">Piscines</a></li>
+            <li>
+              <a href="#restauration" data-i18n="f2.badge">Emplacements</a>
+            </li>
+            <li><a href="#resto" data-i18n="f4.badge">Restauration</a></li>
+            <li><a href="#jeux" data-i18n="f5.badge">Jeux</a></li>
+            <li><a href="#campingcar" data-i18n="f6.badge">Camping-car</a></li>
+            <li><a href="#animaux" data-i18n="f3.badge">Pet friendly</a></li>
+          </ul>
+        </nav>
+
+        <div class="footer__col footer__map">
+          <h3 data-i18n="foot.find">Nous trouver</h3>
+          <div
+            class="footer__map-visual"
+            role="img"
+            aria-label="Plan du domaine"
+            data-i18n-attr="aria-label:foot.mapAria"
+          ></div>
+        </div>
+      </div>
+
+      <!-- role="group" : le aria-label est interdit sur un <div> (role generic) — nom conservé, aucun impact visuel -->
+      <div
+        class="container footer__partners"
+        role="group"
+        aria-label="Partenaires"
+        data-i18n-attr="aria-label:foot.partnersAria"
+      >
+        <span class="partner"></span><span class="partner"></span
+        ><span class="partner"></span><span class="partner"></span>
+      </div>
+
+      <div class="footer__legal">
+        <div class="container footer__legal-inner">
+          <div class="footer__legal-text">
+            <p data-i18n="foot.rights">
+              © <span id="year"></span> Camping Les 2 Vallées — Tous droits
+              réservés.
+            </p>
+            <p class="footer__credits">
+              Photo du rideau&nbsp;: Laurent Hosansky — CC BY-SA 3.0, Wikimedia
+              Commons
+            </p>
+            <p class="footer__credits">
+              Photo du chien&nbsp;: Daniel Eliashevsky — Pexels
+            </p>
+          </div>
+          <ul class="footer__legal-links">
+            <li>
+              <a
+                href="mentions-legales.html"
+                data-i18n="foot.legal"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Mentions légales</a
+              >
+            </li>
+            <li>
+              <a
+                href="politique-de-confidentialite.html"
+                data-i18n="foot.privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Politique de confidentialité</a
+              >
+            </li>
+          </ul>
+          <ul class="footer__social">
+            <li>
+              <a
+                href="https://www.instagram.com/campingles2vallees.aveyron"
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                aria-label="Instagram"
+              >
+                <svg class="social__icon" aria-hidden="true">
+                  <use href="#i-instagram" />
+                </svg>
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.facebook.com/Campingles2Vallees.Aveyron/"
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                aria-label="Facebook"
+              >
+                <svg class="social__icon" aria-hidden="true">
+                  <use href="#i-facebook" />
+                </svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ===================== RÉSERVATION : CTA fixe + calendrier =====================
+         Le CTA est un <a> : sans JS il mène directement au site de réservation
+         (dégradé mais fonctionnel) ; avec JS il ouvre le calendrier (le clic est
+         intercepté). Le libellé, l'URL et les noms de paramètres se règlent dans
+         la constante BOOKING, en tête de js/script.js. -->
+    <div class="booking" id="booking">
+      <div class="booking__scrim" data-booking-close></div>
+
+      <div
+        class="booking__panel"
+        id="bookingPanel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="bookingTitle"
+      >
+        <div class="booking__head">
+          <h2 class="booking__title" id="bookingTitle" data-i18n="book.title">
+            Choisissez vos dates
+          </h2>
+          <button
+            class="booking__close"
+            type="button"
+            data-booking-close
+            aria-label="Fermer le calendrier"
+            data-i18n-attr="aria-label:book.closeAria"
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path
+                d="M6 6l12 12M18 6L6 18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div
+          class="booking__types"
+          id="bookingTypes"
+          role="radiogroup"
+          aria-label="Type d'emplacement"
+          data-i18n-attr="aria-label:book.typeAria"
+        >
+          <button
+            class="booking__type"
+            type="button"
+            data-type="emplacement"
+            role="radio"
+            aria-checked="true"
+            data-i18n="book.typeEmpl"
+          >
+            Emplacement
+          </button>
+          <button
+            class="booking__type"
+            type="button"
+            data-type="mobilhome"
+            role="radio"
+            aria-checked="false"
+            data-i18n="book.typeMh"
+          >
+            Mobil-home
+          </button>
+          <button
+            class="booking__type"
+            type="button"
+            data-type="chalet"
+            role="radio"
+            aria-checked="false"
+            data-i18n="book.typeCh"
+          >
+            Chalet
+          </button>
+        </div>
+
+        <div
+          class="booking__fields"
+          role="group"
+          aria-label="Dates du séjour"
+          data-i18n-attr="aria-label:book.datesAria"
+        >
+          <button
+            class="booking__field"
+            type="button"
+            data-field="start"
+            aria-pressed="false"
+          >
+            <span class="booking__field-label" data-i18n="book.fStart"
+              >Arrivée</span
+            >
+            <span class="booking__field-value" data-value="start">—</span>
+          </button>
+          <button
+            class="booking__field"
+            type="button"
+            data-field="end"
+            aria-pressed="false"
+          >
+            <span class="booking__field-label" data-i18n="book.fEnd"
+              >Départ</span
+            >
+            <span class="booking__field-value" data-value="end">—</span>
+          </button>
+        </div>
+
+        <div class="booking__calendars" id="bookingCalendars"></div>
+
+        <p class="booking__hint" id="bookingHint" aria-live="polite"></p>
+      </div>
+
+      <div class="booking__bar">
+        <a
+          class="btn booking__cta"
+          id="bookingCta"
+          href="https://exemple-reservation.com/reservation"
+          aria-haspopup="dialog"
+          aria-controls="bookingPanel"
+          aria-expanded="false"
+        >
+          <span id="bookingCtaLabel" data-i18n="js.ctaOpen"
+            >Réservez votre séjour</span
+          >
+        </a>
+        <button
+          class="btn booking__contact-cta"
+          id="contactCta"
+          type="button"
+          aria-haspopup="dialog"
+          aria-controls="contactPanel"
+          aria-expanded="false"
+          data-i18n="contact.cta"
+        >
+          Nous contacter
+        </button>
+      </div>
+    </div>
+
+    <!-- ===================== CONTACT : formulaire par-dessus le site =========
+         Le bouton d'ouverture vit dans la barre du CTA de réservation
+         (.booking__bar, ci-dessus) ; le formulaire reprend le mécanisme du
+         calendrier : voile + panneau, focus restreint au panneau, Échap pour
+         fermer. L'envoi est un STUB pour l'instant (pas d'endpoint ni
+         d'adresse de réception) : le point de branchement est marqué dans
+         js/script.js ? initContact(). -->
+    <div class="contact" id="contact">
+      <div class="contact__scrim" data-contact-close></div>
+
+      <div
+        class="contact__panel"
+        id="contactPanel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="contactTitle"
+      >
+        <div class="booking__head">
+          <h2
+            class="booking__title"
+            id="contactTitle"
+            data-i18n="contact.title"
+          >
+            Contactez-nous
+          </h2>
+          <button
+            class="booking__close"
+            type="button"
+            data-contact-close
+            aria-label="Fermer le formulaire de contact"
+            data-i18n-attr="aria-label:contact.closeAria"
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path
+                d="M6 6l12 12M18 6L6 18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <form
+          class="contact__form"
+          id="contactForm"
+          aria-label="Formulaire de contact"
+          data-i18n-attr="aria-label:contact.formAria"
+        >
+          <div class="contact__row">
+            <label
+              class="contact__label"
+              for="contactName"
+              data-i18n="contact.name"
+              >Nom</label
+            >
+            <input
+              class="contact__input"
+              type="text"
+              id="contactName"
+              name="name"
+              autocomplete="name"
+              placeholder="Votre nom"
+              data-i18n-attr="placeholder:contact.phName"
+              required
+            />
+          </div>
+          <div class="contact__row">
+            <label
+              class="contact__label"
+              for="contactEmail"
+              data-i18n="contact.email"
+              >E-mail</label
+            >
+            <input
+              class="contact__input"
+              type="email"
+              id="contactEmail"
+              name="email"
+              autocomplete="email"
+              placeholder="vous@exemple.fr"
+              data-i18n-attr="placeholder:contact.phEmail"
+              required
+            />
+          </div>
+          <div class="contact__row">
+            <label
+              class="contact__label"
+              for="contactPhone"
+              data-i18n="contact.phone"
+              >Téléphone (facultatif)</label
+            >
+            <input
+              class="contact__input"
+              type="tel"
+              id="contactPhone"
+              name="phone"
+              autocomplete="tel"
+              placeholder="06 12 34 56 78"
+              data-i18n-attr="placeholder:contact.phPhone"
+            />
+          </div>
+          <div class="contact__row">
+            <label
+              class="contact__label"
+              for="contactMessage"
+              data-i18n="contact.message"
+              >Message</label
+            >
+            <textarea
+              class="contact__input contact__textarea"
+              id="contactMessage"
+              name="message"
+              rows="4"
+              placeholder="Votre message…"
+              data-i18n-attr="placeholder:contact.phMessage"
+              required
+            ></textarea>
+          </div>
+          <button
+            class="btn btn--accent contact__send"
+            type="submit"
+            data-i18n="contact.send"
+          >
+            Envoyer
+          </button>
+        </form>
+
+        <p
+          class="contact__success"
+          id="contactSuccess"
+          aria-live="polite"
+          hidden
+          tabindex="-1"
+          data-i18n="contact.success"
+        >
+          Merci ! Votre message a bien été envoyé. Nous revenons vers vous très
+          vite.
+        </p>
+      </div>
+    </div>
+
+    <!-- Lien "retour en haut" -->
+    <button class="to-top" id="toTop" aria-label="Retour en haut">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <path
+          d="M6 15l6-6 6 6"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+
+    <script src="js/i18n.min.js?v=20" defer></script>
+    <script src="js/script.min.js?v=15" defer></script>
+  </body>
+</html>

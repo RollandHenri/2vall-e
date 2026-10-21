@@ -1,0 +1,4300 @@
+/* ============================================================
+   Camping des 2 Vallées — Feuille de style principale
+   Vanilla CSS · Design system · Responsive · Accessible
+   ============================================================ */
+
+/* ---------- 1. Variables (design tokens) ---------- */
+:root {
+  /* Couleurs — palette « nature » : ancre vert forêt, accents terre/eau/soleil */
+  --forest: #1d3b2d;
+  --forest-2: #26503e;
+  --terracotta: #da6c53;
+  --terracotta-dk: #c2573f;
+  /* Variante assombrie (AA sur blanc) : boutons primaires, numéros de légende */
+  --terracotta-btn: #c05542;
+  --terracotta-btn-hv: #b54e37;
+  --sky: #d6eaef;
+  --sky-2: #eaf5f8;
+  --green: #5e8a6e;
+  --green-dk: #3f6853;
+  /* Variante AA sur blanc pour les aplats portant du texte (cf. .badge--green) */
+  --green-btn: #4f7a62;
+  --yellow: #e3c766;
+  --cyan: #00a8c8;
+  /* Variantes de contraste : texte (AA sur blanc) et contours sur fond sombre */
+  --cyan-dk: #0a7f96;
+  --cyan-lt: #85bfcb;
+  --white: #ffffff;
+  --ink: #1d3b2d;
+  --muted: #56685d;
+  --line: #dee8e2;
+
+  /* Typographie */
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body:
+    "Onest", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+  /* Échelle / mesures */
+  --container: 1200px;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --radius: 18px;
+  --radius-sm: 12px;
+  --radius-pill: 999px;
+
+  /* Ombres (teinte forêt) */
+  --shadow-sm: 0 2px 10px rgba(29, 59, 45, 0.08);
+  --shadow: 0 12px 40px rgba(29, 59, 45, 0.12);
+  --shadow-lg: 0 24px 70px rgba(29, 59, 45, 0.18);
+
+  /* Matière de la plaque du bandeau : la barre ET le bloc social la
+     partagent, pour que les deux forment une seule surface continue. */
+  --plate-bg: rgba(255, 255, 255, 0.6);
+  --plate-blur: 14px;
+
+  /* Transitions */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --speed: 0.35s;
+  /* Sortie des panneaux (calendrier + contact) : plus lente et plus douce
+     que l'ouverture — le panneau redescend puis se dissout. */
+  --ease-exit: cubic-bezier(0.4, 0, 0.2, 1);
+  --speed-exit: 0.5s;
+
+  /* Hauteurs d'en-tête : téléphone et tablette. Le desktop repose les siennes
+     plus bas — 90px en haut de page, 64px scrollée, 70px bandeau ouvert
+     (cf. §9c). */
+  --header-h: 60px;
+
+  /* Hauteur média du slider "Nos locations" (carte active) */
+  --loc-media-max: 420px;
+  --loc-media-idle: 300px;
+
+  /* Galerie deck : seuil d'épinglage partagé photo/légende
+     (le JS lit aussi ce top via getComputedStyle) + maintien de la
+     dernière paire photo+légende avant libération */
+  --deck-stick-top: 130px;
+  --deck-hold: 10vh;
+}
+
+/* ---------- 1b. Polices locales (SIL OFL) ----------
+   Fraunces & Onest servies depuis assets/fonts/ (aucune requête externe).
+   Polices variables (1 fichier par sous-ensemble) — les poids 300-700
+   utilisés par le site sont couverts. font-display: swap = ancien
+   display=swap de Google Fonts. Les unicode-range sont ceux du CSS
+   Google : le navigateur ne charge que le sous-ensemble utile. */
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../assets/fonts/fraunces-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../assets/fonts/fraunces-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Onest";
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url("../assets/fonts/onest-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Onest";
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url("../assets/fonts/onest-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+/* ---------- 2. Reset & bases ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Ancres : la cible passe sous le header sticky (76px, 64px une fois scrolled).
+   Étendu à 96px pour laisser respirer les cartes features épinglées. */
+:target {
+  scroll-margin-top: 96px;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.1;
+  margin: 0 0 0.5em;
+  color: var(--forest);
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0 0 1rem;
+}
+/* Lien en texte courant : variante foncée pour le contraste AA sur blanc
+   (--cyan seul n'atteint que ~2.3:1). */
+a {
+  color: var(--cyan-dk);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+/* Sprite SVG : les glyphes (réseaux sociaux) sont définis une seule fois en
+   tête de document et repris par <use>. Le conteneur sort du flux et ne
+   réserve aucune place ; aria-hidden, il n'est jamais lu. */
+.svg-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid var(--cyan-dk);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* Sur fond sombre (hero, wave, footer, barre du header posée sur une zone
+   sombre) le cyan foncé retombe sous 3:1 : contour éclairci — la cible reste
+   nette. Sans JS, la matière du header reste forêt (cf. §9) : même traitement. */
+.hero :focus-visible,
+.wave :focus-visible,
+.footer :focus-visible,
+.header.is-over-dark:not(.is-nav-open) :focus-visible,
+html:not(.js) .header :focus-visible,
+.sipario :focus-visible {
+  outline-color: var(--cyan-lt);
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ---------- 3. Boutons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.7rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1;
+  border: 2px solid transparent;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    transform var(--speed) var(--ease),
+    background var(--speed) var(--ease),
+    color var(--speed) var(--ease),
+    box-shadow var(--speed) var(--ease),
+    border-color var(--speed) var(--ease);
+}
+.btn:hover {
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn--accent {
+  background: var(--terracotta-btn);
+  color: var(--white);
+  box-shadow: 0 10px 24px rgba(218, 108, 83, 0.35);
+}
+.btn--accent:hover {
+  background: var(--terracotta-btn-hv);
+}
+
+.btn--outline {
+  background: transparent;
+  color: var(--forest);
+  border-color: var(--forest);
+  margin-top: 1rem;
+}
+.btn--outline:hover {
+  background: var(--forest);
+  color: var(--white);
+}
+
+.btn--sm {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.85rem;
+}
+
+/* ---------- 4. Badges & marks ---------- */
+.badge {
+  display: inline-block;
+  padding: 0.35rem 0.95rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  /* Libellés courts et figés : pas de repli interne de la pastille.
+     Évite qu'un libellé long se coupe en deux lignes (cf. guideline UX
+     « Compact Label Overflow »). */
+  white-space: nowrap;
+  border-radius: var(--radius-pill);
+  margin-bottom: 1rem;
+}
+.badge--yellow {
+  background: var(--yellow);
+  color: var(--forest);
+}
+/* --sky (#D6EAEF) sur blanc = 1,24:1 → aplat indétectable. Bascule sur
+   --cyan-dk (#0a7f96), 4,68:1 sur blanc → AA texte. */
+.badge--blue {
+  background: var(--cyan-dk);
+  color: #fff;
+}
+/* --terracotta (#da6c53) sur blanc = 3,36:1 → sous AA pour du texte de
+   0,78rem. Bascule sur --terracotta-btn (#c05542), 4,55:1. */
+.badge--red {
+  background: var(--terracotta-btn);
+  color: #fff;
+}
+/* --green (#5e8a6e) sur blanc = 3,94:1 → sous AA. --green-btn (#4f7a62),
+   4,89:1 vérifié. */
+.badge--green {
+  background: var(--green-btn);
+  color: #fff;
+}
+/* Badge creux (filet) et non aplat : il sert sur deux fonds antagonistes.
+   Fond clair → --cyan-dk : texte et filet à 4,68:1.
+   L'ancien rgba(0,187,221,.15) se composait en #D9F5FA sur blanc,
+   soit 1,14:1 → totalement invisible. */
+.badge--cyan {
+  background: transparent;
+  color: var(--cyan-dk);
+  /* inset plutôt que border : les badges sont des inline-block dans le
+     flux, un border de 1px les élargirait de 2px → décalage de mise en page */
+  box-shadow: inset 0 0 0 1px var(--cyan-dk);
+}
+/* Fond sombre (sipario) : un aplat --cyan-dk n'aurait que 2,62:1 contre
+   --forest, donc fondu dans le fond. Filet + texte éclaircis à --cyan-lt
+   → 6,01:1, et le filet délimite enfin le badge (l'ancien rgba(...,.15)
+   sur forêt donnait 1,30:1 : le badge « Glamping » était quasi indétectable). */
+.sipario .badge--cyan {
+  color: var(--cyan-lt);
+  box-shadow: inset 0 0 0 1px var(--cyan-lt);
+}
+
+.mark {
+  background: linear-gradient(transparent 60%, rgba(233, 211, 109, 0.7) 60%);
+  font-weight: 600;
+}
+
+/* ---------- 5. Sections génériques ---------- */
+.section {
+  padding: clamp(3.5rem, 8vw, 7rem) 0;
+}
+.section__head {
+  max-width: 720px;
+  margin: 0 auto 3rem;
+  text-align: center;
+}
+.section__title {
+  font-size: clamp(1.9rem, 4.5vw, 3rem);
+}
+.lead {
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  color: var(--muted);
+}
+
+/* ---------- 6. Images 100% CSS (dégradés + motifs) ---------- */
+.img {
+  position: relative;
+  background-color: var(--sky);
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+/* Motif subtil réutilisable par-dessus les dégradés */
+.img::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.14) 1px,
+    transparent 1px
+  );
+  background-size: 14px 14px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Photo piscine : chargée par <img class="img img--pool"> (lazy, cf. §6b).
+   Plus de background ici : sur un <img>, ce serait un doublon de requête. */
+.img--pool {
+  background-color: var(--sky);
+}
+/* Motif de points prévu pour les dégradés : inutile (et grainant) sur photo */
+.img--pool::after {
+  display: none;
+}
+/* Photos des prestations : idem, chargées par <img> (cf. §6b). */
+.img--resto,
+.img--games,
+.img--service {
+  background-color: var(--sky);
+}
+.img--resto::after,
+.img--games::after,
+.img--service::after {
+  display: none;
+}
+/* Photo des emplacements (restauration) : le fichier part en <img loading=
+   lazy> DANS un wrapper .img (cf. index.html) — le motif de points du
+   ::after du wrapper se peint par-dessus exactement comme en background ;
+   l'image elle-même remplit le wrapper. Plus de background direct ici
+   (il repartirait immédiatement au premier rendu, en Mobile 4G aussi). */
+.media-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+/* Photo « Pet friendly » (dog-camping.webp, Pexels — Daniel Eliashevsky).
+   Photo portrait : la découpe verticale « center 35% » est reprise par
+   img.img--pet (§6b) via object-position. */
+.img--pet {
+  background-color: var(--sky);
+}
+/* Photo de la section Histoire (pro.webp, portrait 3:4) — <img>, cf. §6b. */
+.img--history {
+  background-color: var(--sky);
+}
+/* Motif de points prévu pour les dégradés : inutile (et grainant) sur photo */
+.img--history::after {
+  display: none;
+}
+/* Cartes 1 à 3 du carrousel "Nos locations" : photos (chalet Sélection,
+   mobil-home Cosy 2 chambres, emplacement) chargées par <img> (cf. §6b). */
+.img--offer1 {
+  background-color: var(--sky);
+}
+.img--offer1::after {
+  display: none;
+}
+.img--offer2 {
+  background-color: var(--sky);
+}
+.img--offer2::after {
+  display: none;
+}
+.img--offer3 {
+  background-color: var(--sky);
+}
+.img--offer3::after {
+  display: none;
+}
+.img--offer4 {
+  background: linear-gradient(150deg, #d9c3ea, #a987c9 55%, #6b4f8a);
+}
+/* Conservée pour la carte 5 du carrousel Locations (la galerie Instagram
+   dont elle venait a été supprimée). Photo chargée par <img> (cf. §6b). */
+.img--insta3 {
+  background-color: var(--sky);
+}
+/* Photos des grands sites de la section « Région » (deck).
+   Sources Wikimedia Commons, converties en webp ; chaque légende porte
+   la mention de crédit exigée par la licence. La carte Région 1 est un
+   crop 4/5 (480×600) d'un panorama de domaine public (PD-self).
+   Chargées par <img> depuis la passe §6b — plus de background ici
+   (un <img> ne ferait qu'un doublon de requête). */
+.img--region1,
+.img--region2,
+.img--region3,
+.img--region4,
+.img--region5 {
+  background-color: var(--sky);
+}
+
+/* ---------- 6b. Photos de section en <img> natif (lazy-loading) ----------
+   Les photos de sections (features, deck, locations, histoire) sont passées
+   du background CSS à <img loading="lazy"> : seules celles proches du viewport
+   se téléchargent, au lieu des ~2,5 Mo avalés au premier rendu.
+   Rendu identique : object-fit:cover remplace background-size:cover et
+   object-position reprend background-position ; la GÉOMÉTRIE ne bouge pas —
+   elle reste portée par les classes existantes ci-dessous (aspect-ratio,
+   height, portées plus élevées dans la feuille) qui s'appliquent pareillement
+   à un élément remplacé. La classe .img (position, overflow, couleur
+   d'attente) est conservée ; ses ::after ne s'affichent de toute façon pas
+   sur un élément remplacé — les photos les avaient déjà désactivées.
+   (.img--insta3 et .img--offer4 gardent le mécanisme background :
+   dégradés ou motifs, pas des photos à élément remplacé.) */
+img.img {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+/* Les médias au ratio imposé par une classe (aspect-ratio 4/3 des features,
+   4/5 du deck, 3/4 de l'histoire) : height:auto neutralise l'indice
+   présentationnel posé par les attributs width/height (sinon une hauteur
+   fixe en px écraserait l'aspect-ratio et changerait le cadrage).
+   Les cartes locations (hauteurs fixes en px par classes) ne sont PAS
+   concernées : leurs hauteurs author priment déjà sur ces indices. */
+img.img.feature__media,
+.deck__card > img.img,
+img.img.history__media {
+  height: auto;
+}
+/* Reprise exacte de la découpe horizontale « center 35% / cover » */
+img.img--pet {
+  object-position: 50% 35%;
+}
+
+/* ---------- 7. Effet Ken Burns (remplace les vidéos) ----------
+   Le hero ne s'en sert plus : son fond est la vidéo sur le desktop et le
+   carrousel sur le téléphone, tous deux posés sur le dégradé de repli de
+   .hero__media (§11). Seule la section vague garde l'effet. */
+.kenburns {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+.wave__media.kenburns {
+  background:
+    radial-gradient(
+      80% 70% at 30% 30%,
+      rgba(255, 255, 255, 0.4),
+      transparent 55%
+    ),
+    linear-gradient(150deg, #5e8a6e 0%, #3f6853 55%, #1d3b2d 100%);
+  animation: kenburns 26s ease-in-out infinite alternate;
+  transform-origin: 40% 60%;
+}
+@keyframes kenburns {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.15) translate(-2%, -1.5%);
+  }
+}
+
+/* ---------- 9. Header ----------
+   La barre est nue tant que le menu est fermé : elle laisse voir la page —
+   photo du hero, sections, pied de page — et c'est la bascule is-over-dark
+   (§9b) qui garde marque, pilule Menu et liens lisibles par-dessus. À
+   l'ouverture seulement, une plaque s'allume derrière le bandeau : blanc à
+   60 % et flouté en desktop (§9c), blanc opaque sur téléphone (§25), les deux
+   avec l'ombre du panneau pour se détacher du contenu.
+   Réglages desktop : §9c ; burger et panneau : §25. */
+.header {
+  /* La barre reste dans le flux (sticky) : c'est sa hauteur qui décide de
+     l'offset du héros, et les deux bougent ensemble (cf. §11). La sortir du
+     flux (fixed) réglerait le héros, mais la barre se mettrait à couvrir la
+     gouttière du scrollbar et déborderait du corps sur mobile — la largeur
+     d'un fixed se calcule sur la fenêtre, pas sur le document. */
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  background: transparent;
+  /* Hauteur de la marque du bandeau. Elle ne mène plus qu'une chose : la
+     hauteur de l'image (§ plus bas). Chaque état pose la sienne — 84px en haut
+     de page, 64px scrollée, 48px bandeau ouvert en desktop (§9c), 36px sur
+     téléphone (§25). */
+  --logo-h: 44px;
+  transition: height var(--speed) var(--ease);
+}
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+/* La plaque de l'ouverture vit sur une couche dédiée (z-index:-1) : le contenu
+   du bandeau — liens, pilules, marque — reste donc intact au-dessus d'elle.
+   Elle suit la boîte du bandeau, donc elle se resserre avec lui.
+   Elle n'existe qu'ouverte : au repos elle est invisible, la barre est nue.
+   Le flou est ce qui rend un blanc à 60 % lisible — sans lui, 40 % de la photo
+   traverse les liens et peut les faire passer sous le seuil de contraste. Il
+   était proscrit tant que la barre était évidée d'un cercle : il bavait dans la
+   découpe (mesuré sur la vague, 138,157,148 à 20px du bord au lieu du fond
+   70,100,85). La découpe ayant disparu, il n'y a plus rien à baver.
+   Le filtre n'est jamais retiré — il ne s'interpole pas, et le retirer ferait
+   sauter le flou en plein fondu de fermeture : c'est l'opacité qui fait tout,
+   et un élément à opacité nulle n'est pas peint, donc ne coûte rien. */
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--plate-bg);
+  -webkit-backdrop-filter: blur(var(--plate-blur));
+  backdrop-filter: blur(var(--plate-blur));
+  box-shadow: var(--shadow-sm);
+  opacity: 0;
+  transition: opacity var(--speed) var(--ease);
+}
+/* Seule l'ouverture blanche l'allume. Sans JS, elle ne s'allume jamais : la nav
+   y est déployée d'office sur la barre nue, en encre blanche (cf. §9b).
+   L'ombre basse est retirée alors : le bloc social est collé sous la barre
+   (cf. §29b) et l'ombre y tracerait une ligne horizontale — les deux surfaces
+   ne formeraient plus un seul bloc. */
+.js .header.is-nav-open::before {
+  opacity: 1;
+  box-shadow: none;
+}
+.header.is-scrolled {
+  height: 64px;
+}
+/* La marque flotte sur la page : encre forêt sur les fonds clairs, blanche sur
+   les sombres — même bascule que l'encre du §9b. Sur la plaque blanche de
+   l'ouverture elle reste forêt, d'où le :not(.is-nav-open). Sans JS, aucune
+   bascule possible : blanc, la couleur du haut de page. */
+.header .logo {
+  color: var(--forest);
+}
+.header.is-over-dark:not(.is-nav-open) .logo,
+html:not(.js) .header .logo {
+  color: #fff;
+}
+
+/* Logo */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: inherit;
+}
+.logo:hover {
+  text-decoration: none;
+}
+.logo__mark {
+  display: grid;
+  place-items: center;
+}
+.logo__mark img {
+  height: 44px;
+  width: auto;
+  display: block;
+}
+/* La marque du header suit le jeton --logo-h, que chaque état pose : 84px en
+   haut de page, 64px scrollée, 48px bandeau ouvert en desktop (§9c), 36px sur
+   téléphone (§25). Celle du pied de page garde les 44px ci-dessus.
+   Elle suit aussi la teinte de ce qu'il y a DERRIÈRE elle : aux couleurs du PNG
+   sur les fonds clairs ou sur la plaque blanche de l'ouverture, blanche sur les
+   zones sombres sous la barre — ou sans JS, où aucune bascule n'est possible.
+   Les trois fonctions de filter sont là pour que la bascule s'interpole au lieu
+   de sauter : l'ombre portée (drop-shadow, qui suit la silhouette du PNG et non
+   sa boîte) figure donc dans toutes les listes, à opacité nulle tant qu'elle
+   n'a pas lieu d'être. */
+.header .logo__mark img {
+  height: var(--logo-h);
+  filter: brightness(1) invert(0) drop-shadow(0 1px 3px rgba(8, 26, 18, 0));
+  transition:
+    height var(--speed) var(--ease),
+    filter var(--speed) var(--ease);
+}
+.header.is-over-dark:not(.is-nav-open) .logo__mark img,
+html:not(.js) .header .logo__mark img {
+  filter: brightness(0) invert(1) drop-shadow(0 1px 3px rgba(8, 26, 18, 0));
+}
+.logo__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+.logo__text strong {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.logo__text em {
+  font-style: normal;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+/* ---------- 9b. Nav principale dans le header ---------- */
+.header__nav ul {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 2.4vw, 2.2rem);
+}
+.header__nav a {
+  position: relative;
+  display: inline-block;
+  padding: 0.35rem 0;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--forest);
+  text-decoration: none;
+  transition: color var(--speed) var(--ease);
+}
+/* Soulignement animé : trait terracotta qui se déploie de gauche à droite */
+.header__nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--terracotta);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--speed) var(--ease);
+}
+.header__nav a:hover,
+.header__nav a:focus-visible {
+  color: var(--terracotta-dk);
+  text-decoration: none;
+}
+.header__nav a:hover::after,
+.header__nav a:focus-visible::after {
+  transform: scaleX(1);
+}
+/* Zone sombre derrière la barre (hero, rideau, vague, pied de page), ou aucune
+   bascule possible sans JS : encre blanche, et terracotta pleine au survol —
+   --terracotta-dk n'est pensée que pour un fond blanc, où elle donne 3.36:1
+   contre 3.9 pour la terracotta pleine sur une zone sombre. */
+.header.is-over-dark:not(.is-nav-open) .header__nav a,
+html:not(.js) .header__nav a {
+  color: #fff;
+}
+.header.is-over-dark:not(.is-nav-open) .header__nav a:hover,
+.header.is-over-dark:not(.is-nav-open) .header__nav a:focus-visible,
+html:not(.js) .header__nav a:hover,
+html:not(.js) .header__nav a:focus-visible {
+  color: var(--terracotta);
+}
+/* Burger : masqué par défaut ; il n'est affiché qu'en ≤860px ET si
+   la classe .js est posée (sinon la nav reste visible en dur) */
+.header__burger {
+  display: none;
+}
+
+/* ---------- 9c. Header desktop : le bandeau déployable (≥861px) ----------
+   Bouton « Menu » en haut à gauche, logo pile au milieu, CTA « Réservez » à
+   droite. À l'ouverture, le bandeau se resserre (90 → 70px), la marque rentre
+   dans la barre (84 → 48px), la plaque blanche s'allume derrière (§9) et les
+   deux moitiés de la nav sortent du centre en passant de part et d'autre du
+   logo.
+   En ≤860px, rien de tout ça : barre plus basse, burger et panneau déroulant
+   inchangés (§25).
+   Sans JS : bouton masqué, nav et CTA visibles en clair, déployés d'office —
+   sur la barre nue, donc en encre blanche (cf. html:not(.js), §9b). */
+@media (min-width: 861px) {
+  :root {
+    /* 90px en haut de page, 64px une fois scrollé : les tops d'épinglage de
+       #prestation (90/115/140/165/190/215px) et du deck (130px) supposent un bandeau
+       resserré. Ouvert, le bandeau se resserre à 70px (cf. .header.is-nav-open
+       ci-dessous). */
+    --header-h: 90px;
+    --header-open-h: 70px;
+    /* Largeur de la capsule de gauche (pilule « Menu ») — sert aussi de dégagement
+       aux extrémités de chaque moitié de nav : le premier lien ne peut donc pas
+       passer sous la capsule. */
+    --side-w: clamp(5rem, 9vw, 7.5rem);
+    /* Même pas que l'écart entre deux liens (règle de base) : c'est l'air
+       laissé entre le logo et la première moitié de la nav.
+       Fluide : resserré au seuil 861px (~14px) pour que les liens ne se
+       cassent pas, 2.2rem atteint dès ~1375px — les grands écrans ne
+       voient aucune différence. */
+    --nav-gap: clamp(0.6rem, 1.6vw, 2.2rem);
+    /* Dégagement supplémentaire entre le 1er/dernier lien et la pilule/langue :
+       Fluide : 0.75rem mini au seuil 861px (évite le chevauchement),
+       grandit jusqu'à 2.5rem vers 1400px+. */
+    --nav-clearance: clamp(0.75rem, 1.8vw, 2.5rem);
+    /* Décollage des boutons Menu/langue du bord de l'écran : 50px de chaque côté.
+       Les paddings des groupes de nav absorbent ce décalage pour garder l'espacement
+       liens ↔ boutons identique. */
+    --btn-inset: 50px;
+  }
+
+  /* Ouvert : le bandeau se resserre à 70px et la marque à 48px — elle rentre
+     alors dans la barre avec 11px d'air en haut et en bas, au lieu de la déborder
+     comme la marque de 84px. Une seule géométrie d'ouverture, que l'on soit en
+     haut de page (90px fermé, ça se resserre) ou scrollé (64px, ça s'ouvre un
+     peu) : les liens, la pilule et la croix restent au même endroit. */
+  .header.is-nav-open {
+    height: var(--header-open-h);
+    --logo-h: 48px;
+  }
+  /* La marque fermée, elle, suit le resserrement de la barre : 84px en haut de
+     page, 64px une fois scrollée. C'est --logo-h qui mène les deux — hauteur de
+     l'image, cf. §9. */
+  .header {
+    --logo-h: 84px;
+  }
+  .header.is-scrolled:not(.is-nav-open) {
+    --logo-h: 64px;
+  }
+
+  /* Grille 3 colonnes pour le desktop : [burger] [logo] [lang] — la nav
+     s'étale sur les 3 colonnes via subgrid. */
+  .header__inner {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 0;
+    height: 100%;
+    grid-template-rows: minmax(0, 1fr);
+  }
+  /* Logo centré dans la colonne du milieu */
+  .header .logo {
+    grid-area: 1 / 2;
+    justify-self: center;
+    align-self: center;
+    position: relative;
+    z-index: 2;
+  }
+  /* Sélecteur de langue à droite (colonne 3) — décollé de 50px du bord droit */
+  .lang {
+    grid-area: 1 / 3;
+    justify-self: end;
+    margin-inline-end: var(--btn-inset);
+  }
+
+  /* Anneau de focus clair dès que le fond derrière le bandeau est sombre */
+  .header.is-over-dark :focus-visible {
+    outline-color: var(--cyan-lt);
+  }
+  /* Le contour de focus clair (règle de base) suppose un fond sombre : ici la
+     plaque blanche de l'ouverture éclaircit le fond, le contour repasse donc au
+     cyan foncé dès que le bandeau est ouvert. */
+  .js .header.is-nav-open :focus-visible {
+    outline-color: var(--cyan-dk);
+  }
+
+  /* ---- Le bouton : pilule « Menu », qui se change en croix ---- */
+  /* Mêmes codes que .btn (pilule, bordure 2px, graisse 600, survol qui
+     remonte, fond terracotta) : le bouton du bandeau est désormais le jumeau
+     plein du CTA, pas son concurrent en creux. Un seul habit, lisible aussi
+     bien sur les zones sombres (hero, rideau, vague, pied de page) que sur les
+     fonds clairs et la plaque blanche de l'ouverture. Même largeur que le CTA
+     (--side-w) pour que les deux capsules se répondent. */
+  .js .header__burger {
+    grid-area: 1 / 1;
+    justify-self: start;
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--side-w);
+    min-height: 42px; /* cible tactile confortable */
+    padding: 0.72rem 1.5rem;
+    border: 2px solid var(--terracotta-btn);
+    border-radius: var(--radius-pill);
+    background: var(--terracotta-btn);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.9rem;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    color: #fff;
+    margin-inline-start: var(--btn-inset);
+    transition:
+      transform var(--speed) var(--ease),
+      background var(--speed) var(--ease),
+      border-color var(--speed) var(--ease),
+      color var(--speed) var(--ease),
+      min-width var(--speed) var(--ease),
+      padding var(--speed) var(--ease);
+  }
+  /* Pilule pleine terracotta, comme le CTA « Réservez » : survol plus sombre
+     (#b54e37), même token que .btn. Était un fantôme (liseré blanc + fond
+     12 %) réservé aux zones sombres — le fond terracotta étant lisible sur
+     clair comme sur sombre, un seul habit suffit désormais. */
+  .js .header__burger:hover {
+    background: var(--terracotta-btn-hv);
+    border-color: var(--terracotta-btn-hv);
+    transform: translateY(-2px);
+  }
+  /* Ouverte : la pilule se rétracte en pastille ronde de 42px autour de la
+     croix — le libellé s'est effacé, sa largeur n'a plus lieu d'être. Même
+     gabarit que le burger mobile. La rétraction s'anime par le min-width
+     (120 → 42) et le padding (1.5rem → 0) ; width fixe la pastille à 42px pile.
+     Le libellé, encore en flux mais invisible, passe alors à 0,6px près. */
+  .header.is-nav-open .header__burger {
+    min-width: 42px;
+    width: 42px;
+    padding: 0;
+  }
+  /* Le libellé s'efface sur place — la croix se dessine au centre de la
+     pastille. Le nom accessible reste « Ouvrir le menu » / « Fermer le menu ». */
+  .header__burger::before {
+    content: attr(data-label);
+    transition: opacity 260ms var(--ease);
+  }
+  .header.is-nav-open .header__burger::before {
+    opacity: 0;
+  }
+  /* Les 3 traits (masqués ici) servent la croix : même morphologie que le
+     burger mobile, mais centrés dans la pilule. */
+  .header__burger-bars {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 22px;
+    height: 2px;
+    margin-top: -1px;
+    margin-left: -11px;
+    opacity: 0;
+    transition: opacity 260ms var(--ease);
+  }
+  .header.is-nav-open .header__burger-bars {
+    opacity: 1;
+  }
+  .header__burger-bars span {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    transition:
+      transform var(--speed) var(--ease),
+      opacity var(--speed) var(--ease);
+  }
+  .header__burger-bars span:nth-child(1) {
+    top: -7px;
+  }
+  .header__burger-bars span:nth-child(3) {
+    top: 7px;
+  }
+  .header.is-nav-open .header__burger-bars span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .header.is-nav-open .header__burger-bars span:nth-child(2) {
+    opacity: 0;
+  }
+  .header.is-nav-open .header__burger-bars span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* ---- La nav : deux moitiés déployées depuis le centre ---- */
+  /* La mise en page (les deux moitiés de part et d'autre du logo) ne dépend
+     pas du JS : sans JS, la nav reste simplement à sa place, déployée. */
+  .header__nav {
+    grid-area: 1 / 1 / 2 / 4;
+    display: grid;
+    grid-template-columns: subgrid; /* reprend les 3 pistes du bandeau */
+    align-items: center;
+    z-index: 1;
+  }
+  /* Avec JS, elle part repliée au centre de la fenêtre : donc invisible et
+     non tabulable (visibility:hidden sort les liens de l'ordre de tabulation). */
+  .js .header__nav {
+    visibility: hidden;
+    clip-path: inset(0 50% 0 50%);
+    transition:
+      clip-path 340ms var(--ease),
+      visibility 0s linear 340ms;
+  }
+  .js .header.is-nav-open .header__nav {
+    visibility: visible;
+    clip-path: inset(0 0 0 0);
+    transition:
+      clip-path 460ms var(--ease),
+      visibility 0s;
+  }
+  /* Chaque moitié s'étale sur toute sa colonne : les liens se répartissent de
+     part et d'autre du logo, au lieu de rester collés à lui. Le dégagement
+     --gutter + --nav-gap à gauche longe la pilule « Menu » ; le même à droite
+     encadre la nav symétriquement (miroir vide, qui garde les deux moitiés à la
+     même distance). --gutter assure une marge confortable au bord du viewport.
+     --nav-clearance ajoute l'air entre Accueil/Infos et les boutons adjacents.
+     --btn-inset décale les groupes pour suivre les boutons décalés de 50px. */
+  .header__nav-group:first-child {
+    grid-column: 1;
+    justify-self: stretch;
+    justify-content: space-between;
+    padding-inline: calc(var(--gutter) + var(--nav-gap) + var(--nav-clearance) + var(--btn-inset)) var(--nav-gap);
+  }
+  .header__nav-group:last-child {
+    grid-column: 3;
+    justify-self: stretch;
+    justify-content: space-between;
+    padding-inline: var(--nav-gap) calc(var(--gutter) + var(--nav-gap) + var(--nav-clearance) + var(--btn-inset));
+  }
+  /* Passage du logo : chaque lien part de derrière le logo et glisse vers sa
+     place ; les plus proches du logo partent en premier, les plus éloignés
+     suivent — la nav se déplie du centre vers les bords. */
+  .js .header__nav-group li {
+    opacity: 0;
+    transition:
+      opacity 240ms var(--ease),
+      transform 300ms var(--ease);
+  }
+  .js .header__nav-group:first-child li {
+    transform: translateX(28px);
+  }
+  .js .header__nav-group:last-child li {
+    transform: translateX(-28px);
+  }
+  .js .header.is-nav-open .header__nav-group li {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 380ms var(--ease),
+      transform 460ms var(--ease);
+  }
+  .js .header.is-nav-open .header__nav-group:first-child li:nth-child(2),
+  .js .header.is-nav-open .header__nav-group:last-child li:nth-child(1) {
+    transition-delay: 40ms;
+  }
+  .js .header.is-nav-open .header__nav-group:first-child li:nth-child(1),
+  .js .header.is-nav-open .header__nav-group:last-child li:nth-child(2) {
+    transition-delay: 130ms;
+  }
+  /* Les liens ne se montrent que sur la plaque blanche de l'ouverture : forêt,
+     et terracotta assombrie au survol (--terracotta n'atteint que 3.36:1). */
+  .header.is-nav-open .header__nav a {
+    color: var(--forest);
+  }
+  .header.is-nav-open .header__nav a:hover,
+  .header.is-nav-open .header__nav a:focus-visible {
+    color: var(--terracotta-dk);
+  }
+
+  /* Desktop étroit (861–1279px) : resserrage de la nav.
+     --side-w réduit pour que la pilule « Menu » ne mange pas l'espace.
+     --nav-clearance fluide via clamp() ci-dessus (pas de surcharge).
+     Sécurité supplémentaire : liens légèrement plus petits et gap mini abaissé
+     pour garantir qu'aucun chevauchement n'apparaisse au pire cas (zoom, polices larges). */
+  @media (max-width: 1279px) {
+    :root {
+      --side-w: clamp(4.5rem, 6.5vw, 7.5rem);
+    }
+    .js .header__burger {
+      padding: 0.72rem 0.85rem;
+    }
+    .header__nav ul {
+      gap: clamp(0.5rem, 1.4vw, 1.4rem);
+    }
+    .header__nav a {
+      font-size: 0.88rem;
+    }
+  }
+}
+
+/* ---------- 11. Hero ---------- */
+/* Le héros fait 100dvh : il commence au bord haut de la fenêtre et se
+   termine au bord bas, dans tous les états. Il se remonte d'autant que la
+   barre occupe de place dans le flux (marge négative) — d'où les règles
+   d'état plus bas : la barre change de hauteur (90 → 70 à l'ouverture,
+   64 une fois scrollée, 56 sur téléphone) et le héros suit le même
+   mouvement, avec la même durée et la même courbe : le haut du héros reste
+   donc exactement au bord haut de la fenêtre pendant l'animation, et le
+   document ne se décale plus quand le menu s'ouvre. */
+.hero {
+  position: relative;
+  height: 100dvh;
+  min-height: 560px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: calc(-1 * var(--header-h)); /* remonte sous la barre */
+  padding-top: var(--header-h);
+  overflow: hidden;
+  transition: margin-top var(--speed) var(--ease);
+}
+/* La barre ouverte fait --header-open-h (desktop) : le héros remonte d'autant.
+   Declaré APRÈS la règle « scrollée » pour gagner quand les deux états
+   sont actifs (barre ouverte = 70, pas 64). */
+@media (min-width: 861px) {
+  .header.is-scrolled ~ main .hero {
+    margin-top: -64px;
+  }
+  .header.is-nav-open ~ main .hero {
+    margin-top: calc(-1 * var(--header-open-h));
+  }
+}
+@media (max-width: 860px) {
+  .header.is-scrolled ~ main .hero {
+    margin-top: -56px;
+  }
+}
+
+/* ---- Le fond du hero : deux fonds pour une seule section ----
+   Dégradé de repli toujours présent dessous. Par-dessus, la vidéo sur le
+   desktop, le carrousel sur le téléphone — jamais les deux. Le seuil est
+   861px, exactement celui du JavaScript : les deux doivent rester d'accord,
+   c'est lui qui empêche un téléphone de télécharger les ~7 Mo de la vidéo. */
+.hero__media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      90% 70% at 70% 20%,
+      rgba(255, 255, 255, 0.35),
+      transparent 55%
+    ),
+    linear-gradient(150deg, #6fc0d8 0%, #3f8fb0 40%, #1d3b2d 100%);
+}
+
+/* ---- La vidéo (desktop) ----
+   Masquée et SANS source par défaut : rien n'est téléchargé. Le script pose
+   le src au-dessus de 861px et hors mouvement réduit. Elle ne monte en
+   fondu qu'une fois qu'elle joue vraiment (is-ready) : si la lecture est
+   refusée ou le fichier illisible, le dégradé reste et rien ne clignote. */
+.hero__video {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+}
+.hero__video.is-ready {
+  opacity: 1;
+}
+
+/* ---- Le carrousel (téléphone / tablette) ----
+   Six calques empilés qui se croisent en fondu : le sortant s'efface
+   pendant que l'entrant monte, le fond ne se vide jamais. Chaque calque
+   reste 4s (voir SLIDE_MS dans le script) et dérive doucement pendant ce
+   temps-là. */
+.hero__slides {
+  position: absolute;
+  inset: 0;
+}
+.hero__slide {
+  position: absolute;
+  /* Débord de 3% : la dérive de ±1,5% ne découvre jamais un bord. */
+  inset: -3%;
+  background-image: var(--slide-bg);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 1s var(--ease);
+  /* Position de repos = FIN de dérive. C'est ce qui permet de retirer
+     .is-in après le fondu sans le moindre retour en arrière. */
+  transform: translate3d(var(--to), 0, 0);
+}
+.hero__slide.is-in {
+  opacity: 1;
+  animation: hero-drift 4s linear;
+}
+/* Le sens alterne d'un calque à l'autre : ça respire au lieu de glisser
+   toujours du même côté. */
+.hero__slide:nth-child(odd) {
+  --from: -1.5%;
+  --to: 1.5%;
+}
+.hero__slide:nth-child(even) {
+  --from: 1.5%;
+  --to: -1.5%;
+}
+@keyframes hero-drift {
+  from {
+    transform: translate3d(var(--from), 0, 0);
+  }
+  to {
+    transform: translate3d(var(--to), 0, 0);
+  }
+}
+
+/* Six fonds provisoires, pris dans la palette du site et assez distincts
+   pour que le passage de l'un à l'autre se voie. Le jour où les photos
+   arrivent, --slide-bg devient une url() : rien d'autre à toucher. */
+.hero__slide--1 {
+  --slide-bg:
+    radial-gradient(
+      90% 70% at 70% 20%,
+      rgba(255, 255, 255, 0.35),
+      transparent 55%
+    ),
+    linear-gradient(150deg, #6fc0d8 0%, #3f8fb0 40%, #1d3b2d 100%);
+}
+.hero__slide--2 {
+  --slide-bg:
+    radial-gradient(
+      80% 70% at 30% 30%,
+      rgba(255, 255, 255, 0.28),
+      transparent 55%
+    ),
+    linear-gradient(150deg, #5e8a6e 0%, #3f6853 55%, #1d3b2d 100%);
+}
+.hero__slide--3 {
+  --slide-bg:
+    radial-gradient(
+      100% 80% at 60% 10%,
+      rgba(255, 255, 255, 0.5),
+      transparent 50%
+    ),
+    linear-gradient(155deg, #d6eaef 0%, #9bc0cf 40%, #1d3b2d 100%);
+}
+.hero__slide--4 {
+  --slide-bg:
+    radial-gradient(
+      90% 70% at 50% 15%,
+      rgba(255, 255, 255, 0.45),
+      transparent 55%
+    ),
+    linear-gradient(150deg, #f3cf88 0%, #e0a25f 55%, #c2573f 100%);
+}
+.hero__slide--5 {
+  --slide-bg:
+    radial-gradient(
+      85% 75% at 65% 25%,
+      rgba(255, 255, 255, 0.35),
+      transparent 55%
+    ),
+    linear-gradient(150deg, #e6b3a3 0%, #b35c47 60%, #7d3a2a 100%);
+}
+.hero__slide--6 {
+  --slide-bg:
+    radial-gradient(
+      90% 70% at 40% 20%,
+      rgba(255, 255, 255, 0.4),
+      transparent 55%
+    ),
+    linear-gradient(150deg, #8fd0c0 0%, #4f9e8c 60%, #2f6357 100%);
+}
+
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(29, 59, 45, 0.55) 0%,
+    rgba(29, 59, 45, 0.35) 45%,
+    rgba(29, 59, 45, 0.75) 100%
+  );
+}
+.hero__content {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  max-width: 860px;
+  margin-inline: auto;
+  text-align: center;
+}
+.hero__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--yellow);
+}
+/* ---------- Entrée du hero : fondue pilotée par CSS ----------
+   Remplace l'ancien .reveal (opacity 0 posée par la feuille, état .is-visible
+   ajouté par l'observer JS) : l'animation démarre dès la première peinture,
+   sans attendre le script — même courbe, même durée, même translation —
+   et le titre est compté comme LCP sans être repoussé par l'observer.
+   Sans JS ni CSS l'état final est le même : l'animation part de l'état par
+   défaut (opacité 1) et le bloc prefers-reduced-motion §26 la neutralise. */
+.hero-reveal {
+  animation: hero-in 0.7s var(--ease);
+}
+@keyframes hero-in {
+  from {
+    /* 0.001 et non 0 : Chromium ne compte un élément comme LCP que depuis
+       sa première frame peinte à opacité NON nulle — 0,001 est invisible
+       et compte le H1 dès la première image (0,48 s vs ~1 s sur fond 0). */
+    opacity: 0.001;
+    transform: translateY(28px);
+  }
+}
+.hero__title {
+  color: #fff;
+  font-size: clamp(2.4rem, 7vw, 4.6rem);
+  font-weight: 600;
+  margin-bottom: 0.4em;
+}
+/* Étoiles du classement 3 étoiles du camping : trois étoiles à 5 pointes
+   IDENTIQUES, en ligne, espacement régulier — pas des étincelles.
+   Tailles en em (elles suivent le titre), pulsation douce en alternance
+   avec un delay décalé par étoile (effet vague, jamais en synchro).
+   Le bloc prefers-reduced-motion (§26) les neutralise déjà : elles y
+   figurent alors fixes. */
+.hero__stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  height: 0.6em; /* la ligne des étoiles n'augmente pas la hauteur du titre */
+}
+.hero__star {
+  width: 0.55em;
+  height: 0.55em;
+  color: #fff;
+  transform-origin: center;
+  animation: star-twinkle 2.6s ease-in-out infinite alternate;
+}
+.hero__stars .hero__star:nth-child(2) {
+  animation-delay: 0.35s;
+}
+.hero__stars .hero__star:nth-child(3) {
+  animation-delay: 0.7s;
+}
+@keyframes star-twinkle {
+  from {
+    opacity: 0.45;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.hero__subtitle {
+  font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 46ch;
+  margin-inline: auto;
+}
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+  justify-content: center;
+}
+
+/* ---- Bascule des deux fonds et voile du desktop ----
+   Ce bloc est placé APRÈS toutes les règles .hero__* : une media query
+   n'ajoute aucune spécificité, donc posée plus haut elle serait écrasée
+   par la règle de base de .hero__overlay restée plus bas dans le fichier.
+   Le seuil est celui du script : les deux doivent rester d'accord. */
+@media (min-width: 861px) {
+  .hero__video {
+    display: block;
+  }
+  .hero__slides {
+    display: none;
+  }
+  /* Voile un peu plus dense que sur téléphone : la vidéo offre des plans
+     clairs — ciel, champs, eau — là où le carrousel n'a que des dégradés
+     maîtrisés. C'est l'arrêt du milieu (45 %), celui qui tombe pile sur le
+     titre, qui fait le plus gros du travail.
+     Densité réglée à la mesure, sur six plans de la vidéo : à 0,62/0,48/0,82,
+     6,6 % des pixels du titre restaient sous 3:1 (le seuil du grand texte) ;
+     ici, plus aucun. Descendre d'un cran ramène ces 6,6 % — c'est le seul
+     chiffre à toucher si la vidéo te paraît trop éteinte. */
+  .hero__overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(29, 59, 45, 0.68) 0%,
+      rgba(29, 59, 45, 0.56) 45%,
+      rgba(29, 59, 45, 0.86) 100%
+    );
+  }
+}
+
+/* ---------- 12. Sipario (rideau épinglé qui se FERME au scroll) ---------- */
+/* Section haute = 220vh pour laisser la zone de scroll ; le bloc interne est épinglé (sticky) */
+.sipario {
+  position: relative;
+  height: 220vh;
+  background: var(--forest);
+}
+.sipario__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.sipario__content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 720px;
+  padding-inline: var(--gutter);
+  color: #fff;
+}
+.sipario__title {
+  color: #fff;
+  font-size: clamp(1.9rem, 5vw, 3.2rem);
+}
+.sipario__content p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+}
+/* Les deux panneaux : état initial OUVERT (hors champ) → le contenu est visible,
+   puis ils se referment au scroll pour masquer la section. */
+.sipario__panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50.5%;
+  z-index: 2;
+  will-change: transform;
+  /* Découpe le ::before à la forme exacte du rideau (chaque moitié
+     voyage avec son panneau pendant l'animation) */
+  overflow: hidden;
+  /* Repli visuel si village_nant.webp ne charge pas (recouvert par le ::before) */
+  background:
+    radial-gradient(
+      90% 70% at 70% 20%,
+      rgba(255, 255, 255, 0.35),
+      transparent 55%
+    ),
+    linear-gradient(150deg, #9bc0cf 0%, #4f88a0 45%, #1d3b2d 100%);
+}
+/* Image coupée en deux : le ::before a LA largeur du conteneur
+   (panneau = 50.5% → 100/.505), ancré sur le bord extérieur du rideau.
+   Rideaux fermés → les deux ::before couvrent tous deux exactement
+   [0 → 100%] du conteneur, au même repère d'image → image complète,
+   couture invisible dans la bande de recouvrement.
+   Lazy : l'URL EST dans la feuille (résolution garantie, y compris en
+   file://) mais la règle ne s'applique qu'une fois .is-loaded posée par
+   JS → aucune requête village_nant.webp avant l'approche de la section. */
+.sipario__panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(100% / 0.505);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.sipario.is-loaded .sipario__panel::before {
+  background-image: url("../assets/img/village_nant.webp");
+}
+.sipario__panel--left::before {
+  left: 0;
+}
+.sipario__panel--right::before {
+  right: 0;
+}
+.sipario__panel--left {
+  left: 0;
+  transform: translateX(-100%); /* ouvert */
+}
+.sipario__panel--right {
+  right: 0;
+  transform: translateX(100%); /* ouvert */
+  background:
+    radial-gradient(
+      90% 70% at 30% 30%,
+      rgba(255, 255, 255, 0.3),
+      transparent 55%
+    ),
+    linear-gradient(200deg, #a7c4a0 0%, #3f6853 45%, #1d3b2d 100%);
+}
+/* Repli sans JS / mouvement réduit : rideau laissé OUVERT (contenu visible) */
+.sipario.no-anim .sipario__panel--left {
+  transform: translateX(-100%);
+}
+.sipario.no-anim .sipario__panel--right {
+  transform: translateX(100%);
+}
+
+/* ---------- 13. Intro ---------- */
+.intro {
+  background: var(--sky-2);
+}
+.intro__inner {
+  text-align: center;
+  max-width: 1000px;
+}
+.intro .lead {
+  max-width: 70ch;
+  margin-inline: auto;
+}
+.intro__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+  text-align: left;
+}
+.intro__card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 1.8rem;
+  box-shadow: var(--shadow-sm);
+}
+.intro__card h3 {
+  font-size: 1.3rem;
+}
+
+/* ---------- 14. Features alternés (empilés au scroll) ---------- */
+/* Chaque feature est épinglée (sticky) avec un top croissant :
+   la suivante recouvre la précédente au fur et à mesure du scroll. */
+.features .container {
+  display: block;
+}
+/* Bandeau au-dessus des blocs empilés : le badge est centré sur la largeur
+   du .container. Il reste HORS de la section (dans sa propre ligne) pour ne
+   pas décaler les nth-child qui pilotent l'escalier des features. */
+.features__head {
+  text-align: center;
+  /* 45px = 3 × 15px : le badge descend de 30px de plus dans son bandeau.
+     Si ces 15px changent, ajuster la compensation ci-dessous d'autant
+     (padding-top - 15px, en négatif). */
+  padding-top: 45px;
+  /* Les +30px du padding sont annulés ici → la section des cartes, et donc
+     la première vignette, ne bougent pas d'un pixel. */
+  margin-bottom: -30px;
+}
+.feature {
+  position: sticky;
+  display: grid;
+  /* Colonne média 1,5× la colonne texte : l'image (ratio 4/3, hauteur
+     dérivée de la largeur) gagne 20 % en largeur ET en hauteur. */
+  grid-template-columns: 1.5fr 1fr;
+  align-items: center;
+  gap: clamp(1.5rem, 5vw, 4rem);
+  background: #fff;
+  border-radius: var(--radius);
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  box-shadow: var(--shadow);
+  margin-bottom: 3rem;
+}
+/* Tops croissants pour un empilement en escalier */
+.feature:nth-child(1) {
+  top: 90px;
+  z-index: 1;
+}
+.feature:nth-child(2) {
+  top: 115px;
+  z-index: 2;
+}
+.feature:nth-child(3) {
+  top: 140px;
+  z-index: 3;
+}
+.feature:nth-child(4) {
+  top: 165px;
+  z-index: 4;
+}
+.feature:nth-child(5) {
+  top: 190px;
+  z-index: 5;
+}
+.feature:nth-child(6) {
+  top: 215px;
+  z-index: 6;
+  margin-bottom: 0;
+}
+.feature--reverse {
+  /* Miroir : le média est renvoyé en 2e colonne (order: 2 ci-dessous) —
+     on inverse donc les proportions pour que son image reste la grande. */
+  grid-template-columns: 1fr 1.5fr;
+}
+.feature--reverse .feature__media {
+  order: 2;
+}
+.feature__media {
+  aspect-ratio: 4/3;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+.feature__title {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+}
+.feature__body p {
+  color: var(--muted);
+}
+/* Les blocs alternés portent aussi .reveal, dont la transition d'opacité
+   (0,7 s) s'applique à la valeur que le JS écrit pour le fondu de
+   recouvrement → le fondu traînait derrière le scroll. On raccourcit
+   l'opacité (le transform garde son easing pour l'entrée et le scale). */
+.feature.reveal {
+  transition:
+    opacity 0.25s linear,
+    transform 0.7s var(--ease);
+}
+
+/* ---------- 14b. Galerie "deck" (mazzo-carte) : 2 colonnes ----------
+   Colonne gauche : photos sticky pivotées qui s'empilent au scroll.
+   Colonne droite : légendes en flux normal (pas d'épinglage),
+   synchronisées avec la photo active via .is-active (piloté en JS). */
+.deck__layout {
+  display: grid;
+  /* Colonne photo rétrécie de 20% : la colonne texte récupère la place
+     (légendes plus larges, cartes plus compactes). */
+  grid-template-columns: 0.79fr 1fr;
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: start;
+}
+.deck__stack {
+  position: relative;
+  /* --deck-hold (10vh) : maintient la dernière photo épinglée avant la
+     libération — même padding bas sur la colonne texte → libération
+     commune des deux colonnes, sans vide excessif. */
+  padding-block: 1rem var(--deck-hold);
+}
+.deck__card {
+  position: sticky;
+  top: var(--deck-stick-top);
+  margin: 0 auto 3rem;
+  display: block;
+  width: calc(
+    100% - 30px
+  ); /* décalage pour voir les bords des cartes derrière */
+  transition: filter 0.5s var(--ease);
+  filter: saturate(1) brightness(1);
+}
+.deck__card:last-child {
+  margin-bottom: 0;
+}
+.deck__card .img {
+  /* Format portrait : la hauteur pousse surtout (cartes nettement plus
+     hautes que larges). Plafond pour que la carte épinglée tienne sous le
+     haut d'épinglage, même sur un écran court (sinon le bas déborde). */
+  aspect-ratio: 4/5;
+  max-height: calc(100vh - var(--deck-stick-top) - 2rem);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  transition:
+    box-shadow 0.5s var(--ease),
+    transform 0.5s var(--ease);
+}
+/* Photos non actives légèrement estompées ; la photo active reste pleine */
+.deck__stack.has-active .deck__card {
+  filter: saturate(0.7) brightness(0.96);
+}
+.deck__stack.has-active .deck__card.is-active {
+  filter: none;
+}
+
+/* Chaque carte légèrement pivotée, comme des photos éparpillées.
+   La carte 0 reste droite : c'est elle qui définit l'axe de l'empilement. */
+.deck__card--0 .img {
+  transform: rotate(0deg);
+}
+
+.deck__card--1 .img {
+  transform: rotate(-5deg);
+}
+.deck__card--2 .img {
+  transform: rotate(-3deg);
+}
+.deck__card--3 .img {
+  transform: rotate(7deg);
+}
+.deck__card--4 .img {
+  transform: rotate(-6deg);
+}
+
+/* Colonne texte (droite) : miroir de la colonne photos — même padding
+   haut et même --deck-hold bas → les deux colonnes se terminent au même
+   y et se relâchent au même instant (dernière photo + dernière légende
+   restent épinglées ensemble 10vh). */
+.deck__captions {
+  display: block;
+  padding-block: var(--deck-pad, 20vh) var(--deck-hold);
+}
+.deck__caption {
+  min-height: var(--deck-step, 60vh);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* Épinglée exactement comme sa photo (géométrie miroir) : elle monte,
+     se fige et se libère au même instant → même ligne de lecture. */
+  position: sticky;
+  top: var(--deck-stick-top);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+}
+.deck__caption:last-child {
+  min-height: var(--deck-last, 60vh);
+}
+.deck__caption.is-active {
+  opacity: 1;
+}
+/* Sans JS : aucune activation → légendes lisibles en demi-teinte
+   (:where() → spécificité nulle sur le préfixe, les replis mobile /
+   mouvement réduit restent prioritaires) */
+:where(html:not(.js)) .deck__caption {
+  opacity: 0.55;
+}
+.deck__caption-num {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--terracotta-btn);
+  margin-bottom: 0.5rem;
+}
+.deck__caption-title {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  margin-bottom: 0.5rem;
+}
+.deck__caption p {
+  color: var(--muted);
+  font-size: 1.05rem;
+  max-width: 42ch;
+}
+/* Temps de trajet depuis Nant — repère pratique, ton accentué */
+.deck__caption-time {
+  margin-top: 0.9rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--terracotta-btn);
+}
+/* Crédit photo : mention légale CC, discrète mais conforme AA —
+   --muted à opacité 1 donne 5,9:1 sur le fond clair ; à 0,7 le blend
+   tombait à ~3,1:1 et l'audit color-contrast échouait. */
+.deck__caption-credit {
+  margin-top: 0.4rem;
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+/* ---------- 15. Section wave (remplace vidéo) ---------- */
+.wave {
+  position: relative;
+  padding: clamp(5rem, 12vw, 9rem) 0;
+  overflow: hidden;
+  color: #fff;
+}
+.wave__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(29, 59, 45, 0.55);
+}
+.wave__shape {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 90px;
+  z-index: 3;
+}
+.wave__content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 760px;
+}
+.wave__title {
+  color: #fff;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+}
+.wave__text {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.15rem;
+}
+.wave__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+/* Panneau dépliable "Randonnées au départ de Nant" :
+   le bloc s'agrandit vers le bas au clic via grid-template-rows (0fr → 1fr),
+   la section .wave grandit en flux — aucune transposition du décor. */
+/* ---------- Panneau "topo-guide" : la liste devient un sentier balisé.
+   Un fil pointillé relie les 8 repères (couleurs du balisage FFRandonnée :
+   vert, bleu, rouge, noir) ; une fiche unique s'affiche au survol/focus
+   (desktop) ou à l'appui (tactile). Le bloc s'agrandit vers le bas au clic
+   via grid-template-rows (0fr → 1fr), la section .wave grandit en flux.
+   .wave__hikes est le SIBLING de .wave__actions (le bouton seul vivant
+   dans ce conteneur flex centré) : l'ouverture ne déplace jamais le bouton. */
+.wave__hikes {
+  flex-basis: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--speed-exit) var(--ease);
+}
+.wave__hikes.is-open {
+  grid-template-rows: 1fr;
+}
+.wave__hikes-inner {
+  min-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  transition: visibility var(--speed-exit) var(--ease);
+}
+.wave__hikes.is-open .wave__hikes-inner {
+  visibility: visible;
+}
+.wave__hikes-panel {
+  background: rgba(15, 32, 24, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  margin-top: 1rem;
+  text-align: left;
+  backdrop-filter: blur(4px);
+}
+.wave__hikes-title {
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.35rem, 2.6vw, 1.7rem);
+  margin: 0 0 0.3rem;
+}
+.wave__hikes-intro {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.9rem;
+  font-variant: all-small-caps;
+  letter-spacing: 0.08em;
+  margin: 0 0 1.25rem;
+}
+
+/* Le sentier : fil pointillé vertical + repères cyclistes FFR. */
+.wave__hikes-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  max-width: 640px;
+  margin-inline: auto;
+}
+.wave__hikes-list::before {
+  content: "";
+  position: absolute;
+  left: 11px;
+  top: 14px;
+  bottom: 14px;
+  border-left: 2px dotted rgba(255, 255, 255, 0.4);
+}
+.wave__hike {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+  padding: 0.4rem 0.5rem 0.4rem 40px;
+  border-radius: var(--radius-sm);
+}
+.wave__hike-dot {
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(15, 32, 24, 0.95);
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  transition:
+    border-color var(--speed) var(--ease),
+    box-shadow var(--speed) var(--ease),
+    transform var(--speed) var(--ease);
+}
+/* Balisage FFRandonnée : vert / bleu / rouge / noir, contrastes ≥ 4.5:1
+   garanties sur le fond sombre du panneau. */
+.wave__hike--tvert .wave__hike-dot {
+  border-color: #8fbf85;
+}
+.wave__hike--tbleu .wave__hike-dot {
+  border-color: #7fc3db;
+}
+.wave__hike--trouge .wave__hike-dot {
+  border-color: #e3906c;
+}
+.wave__hike--tnoir .wave__hike-dot {
+  border-color: #ffffff;
+}
+/* ---------- Bouton "En savoir plus" (une boucle à la fois) ---------- */
+.wave__hike-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: auto;
+  padding: 0.2rem 0.1rem;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.3);
+  text-underline-offset: 3px;
+  transition: color var(--speed) var(--ease);
+}
+.wave__hike-more::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-1px) rotate(45deg);
+  transition: transform var(--speed) var(--ease);
+}
+.wave__hike-more:hover,
+.wave__hike-more:focus-visible {
+  color: #ffffff;
+}
+.wave__hike-more:focus-visible {
+  outline: 2px solid var(--cyan-lt);
+  outline-offset: 2px;
+}
+/* Ouvert : le chevron pivote, la fiche se déplie DANS le flux entre la
+   boucle ciblée et la suivante (les entrées du dessous sont poussées). */
+.wave__hike-more[aria-expanded="true"] {
+  color: #ffffff;
+}
+.wave__hike-more[aria-expanded="true"]::after {
+  transform: translateY(1px) rotate(-135deg);
+}
+.wave__hike.is-active .wave__hike-dot {
+  transform: translateY(-50%) scale(1.15);
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.12);
+}
+.wave__hike--tvert.is-active .wave__hike-dot {
+  background: #8fbf85;
+}
+.wave__hike--tbleu.is-active .wave__hike-dot {
+  background: #7fc3db;
+}
+.wave__hike--trouge.is-active .wave__hike-dot {
+  background: #e3906c;
+}
+.wave__hike--tnoir.is-active .wave__hike-dot {
+  background: #ffffff;
+}
+.wave__hike-name {
+  flex: 1 1 auto;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+.wave__hike-meta {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.wave__hike-level {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.18rem 0.6rem;
+  border-radius: var(--radius-pill);
+}
+.wave__hike-level--vert {
+  background: #57694f;
+  color: #ffffff;
+}
+.wave__hike-level--bleu {
+  background: #33586a;
+  color: #ffffff;
+}
+.wave__hike-level--rouge {
+  background: #7a4634;
+  color: #ffffff;
+}
+.wave__hike-level--tnoir {
+  background: #ffffff;
+  color: #10301f;
+}
+
+/* ---------- Fiche du topo (accordéon animé dans le flux) ----------
+   La hauteur s'anime réellement via grid-template-rows 0fr → 1fr :
+   les boucles du dessous sont poussées progressivement. Le chrome
+   (fond, bord, ombre, padding) vit sur le wrapper intérieur pour
+   disparaître complètement à l'état replié. */
+.wave__hike-card {
+  display: grid;
+  grid-template-rows: 0fr;
+  flex-basis: 100%;
+  margin: 0;
+  transition: grid-template-rows 0.4s var(--ease);
+}
+.wave__hike.is-active .wave__hike-card {
+  grid-template-rows: 1fr;
+}
+.wave__hike-card-inner {
+  min-height: 0;
+  overflow: hidden;
+  background: rgba(10, 22, 16, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+  padding: 0.85rem 1rem;
+  margin-top: 0.55rem;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 0.22s var(--ease) 0s,
+    transform 0.22s var(--ease) 0s;
+}
+.wave__hike.is-active .wave__hike-card-inner {
+  opacity: 1;
+  transform: translateY(0);
+  /* le contenu apparaît une fois la boîte entamée, à l'ouverture ;
+     à la fermeture, il s'estompe d'abord (délaiPocket 0) puis la hauteur referme */
+  transition-delay: 0.12s, 0.12s;
+}
+.wave__hike-card-level {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 0.5rem;
+}
+.wave__hike-desc {
+  margin: 0 0 0.5rem;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+.wave__hike-tip {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.82rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.wave__hike-tip::before {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--terracotta);
+  transform: translateY(-1px);
+}
+/* Le bouton basculeur gagne un chevron qui pivote à l'ouverture. */
+.wave__toggle::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  margin-top: -2px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform var(--speed) var(--ease);
+}
+.wave__toggle.is-open::after {
+  transform: rotate(-135deg);
+  margin-top: 2px;
+}
+.wave__toggle.is-open {
+  background: var(--terracotta-btn-hv);
+  transform: translateY(0);
+}
+/* Sur mobile la fiche se déplie dans le flux, sous son entrée.
+   et le bouton "En savoir plus" passe sous le titre de la boucle. */
+@media (max-width: 640px) {
+  .wave__hike-name {
+    flex-basis: 100%;
+  }
+  .wave__hike-meta {
+    flex: 1 1 auto;
+  }
+  .wave__hikes-list::before {
+    left: 7px;
+  }
+  .wave__hike-dot {
+    left: 0;
+    width: 14px;
+    height: 14px;
+  }
+  .wave__hike {
+    padding-left: 32px;
+  }
+}
+
+/* Desktop (≥861px) : le topo s'élargit à 1040px pour que chaque boucle
+   tienne sur UNE ligne (repère + nom + métriques + "En savoir plus").
+   Le panneau s'échappe du conteneur du texte (.wave__content) par un
+   débord calé sur 100vw — la section .wave masque le surplus. */
+@media (min-width: 861px) {
+  .wave__hikes {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+  }
+  .wave__hikes-panel {
+    width: min(1040px, calc(100vw - 2 * var(--gutter)));
+    margin-inline: auto;
+  }
+  .wave__hikes-list {
+    max-width: 1040px;
+  }
+  .wave__hike-name {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1 1 auto;
+  }
+  .wave__hike-meta,
+  .wave__hike-more {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+}
+
+/* ---------- 16/17. Carrousel "Nos locations" (photo active agrandie) ----------
+   Effet fidèle au slider-servizi du site d'origine : la slide centrée
+   (.is-active) s'élargit de 20% de plus que sa largeur active précédente
+   (soit 1,44× la largeur de base) ET son image remplit la rangée média
+   (--loc-media-max), les voisines restent petites.
+   Le glissement est une vraie transition CSS translate .3s ease ; la
+   position finale est mesurée en JS sans animer (FLIP) avant de lâcher
+   le track. Le mode .is-measuring coupe toutes les transitions (mesure,
+   drag, chargement, redimensionnement). */
+.locations {
+  background: var(--sky-2);
+  overflow: hidden;
+}
+.slider__viewport {
+  overflow: hidden;
+  padding-inline: var(--gutter);
+}
+.locations__track {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+  transition: transform 0.3s ease;
+  will-change: transform;
+  touch-action: pan-y; /* vertical = scroll natif, horizontal = swipe du slider */
+}
+.loc-card {
+  flex: 0 0 calc((100% - 3rem) / 3); /* largeur de base = 3 slides visibles */
+  display: grid;
+  grid-template-rows: var(--loc-media-max) auto;
+  background: transparent;
+  transition: flex-basis 0.3s ease;
+}
+.loc-card__media {
+  width: 100%;
+  height: 300px;
+  align-self: end;
+  border-radius: 10px;
+  transition: height 0.3s ease;
+}
+/* Mesure FLIP, drag et chargement : toutes les transitions coupées
+   le temps d'observer ou de suivre le doigt, puis réactivées. */
+.locations__track.is-measuring,
+.locations__track.is-measuring .loc-card,
+.locations__track.is-measuring .loc-card__media {
+  transition: none !important;
+}
+.loc-card__body {
+  padding: 1.2rem 0.5rem 0;
+  text-align: center;
+  min-height: 10rem;
+}
+.loc-card__title {
+  font-size: 1.35rem;
+  margin-bottom: 0.35rem;
+}
+.loc-card__meta {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin-bottom: 0.9rem;
+}
+.loc-card__meta strong {
+  color: var(--terracotta);
+  font-size: 1.2rem;
+}
+
+/* La slide active : +20% de largeur par rapport à l'active précédente
+   (1,44× la base) et image qui remplit la rangée média */
+.loc-card.is-active {
+  flex-basis: calc(((100% - 3rem) / 3) * 1.44);
+}
+.loc-card.is-active .loc-card__media {
+  height: var(--loc-media-max);
+}
+
+.slider__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+.slider__arrow {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--forest);
+  background: #fff;
+  color: var(--forest);
+  display: grid;
+  place-items: center;
+  transition:
+    background var(--speed) var(--ease),
+    color var(--speed) var(--ease),
+    opacity var(--speed) var(--ease);
+}
+.slider__arrow:hover {
+  background: var(--forest);
+  color: #fff;
+}
+.slider__arrow[disabled] {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.slider__arrow[disabled]:hover {
+  background: #fff;
+  color: var(--forest);
+}
+.slider__dots {
+  display: flex;
+  gap: 0.875rem;
+}
+.slider__dots button {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(29, 59, 45, 0.25);
+  transition:
+    background var(--speed) var(--ease),
+    transform var(--speed) var(--ease);
+}
+.slider__dots button.is-active {
+  background: var(--terracotta);
+  transform: scale(1.3);
+}
+
+/* ---------- 18. Histoire ---------- */
+.history__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: clamp(1.5rem, 5vw, 4rem);
+}
+.history__media {
+  aspect-ratio: 3/4;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.history__body p {
+  color: var(--muted);
+}
+
+/* Panels d'alternance Histoire <-> Domaine : les deux panneaux partagent
+   la même cellule de grille ; celui qui n'est pas actif est masqué en
+   cross-fade (opacity + visibility, retiré du parcours clavier).
+   Une seule colonne à toutes les tailles : image en haut, texte,
+   bouton en bas — le même comportement du mobile au desktop. */
+.history__inner--swap {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.swap-panel {
+  grid-area: 1 / 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: clamp(1.5rem, 5vw, 4rem);
+  transition:
+    opacity 0.35s ease,
+    visibility 0.35s ease;
+}
+.swap-panel:not(.is-active) {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+/* Image pleine largeur, ratio horizontal. */
+.swap-panel .history__media,
+.swap-panel .img--plan {
+  aspect-ratio: 16/10;
+}
+.swap-panel__actions {
+  display: flex;
+  padding-top: 0.75rem;
+}
+/* Position : à gauche sur « Notre histoire », à droite sur « Le domaine ». */
+.swap-panel[data-panel="histoire"] .swap-panel__actions {
+  justify-content: flex-start;
+}
+.swap-panel[data-panel="domaine"] .swap-panel__actions {
+  justify-content: flex-end;
+}
+@media (prefers-reduced-motion: reduce) {
+  .swap-panel {
+    transition: none;
+  }
+}
+/* Le panneau randonnées s'ouvre instantanément sans mouvement. */
+@media (prefers-reduced-motion: reduce) {
+  .wave__hikes,
+  .wave__hikes-inner,
+  .wave__hike-dot,
+  .wave__hike-more::after,
+  .wave__toggle::after {
+    transition: none;
+  }
+  .wave__hike-card,
+  .wave__hike-card-inner {
+    transition: none;
+  }
+}
+/* Desktop : la photo n'occupe que la moitié de la largeur du bloc,
+   centrée au-dessus du texte (ratio 16/10 conservé). */
+@media (min-width: 861px) {
+  .swap-panel .history__media {
+    max-width: 60%;
+    margin-inline: auto;
+    /* +20 % de hauteur à largeur égale : passage du ratio 16/10 (0,625)
+       au ratio 4/3 (0,75) = exactement 1,2 (0,75 / 0,625). */
+    aspect-ratio: 4/3;
+  }
+}
+
+/* ---------- 18b. Moyens de paiement ---------- */
+/* Bandeau clair de transition entre l'histoire et le footer sombre.
+   Les tuiles ne sont pas interactives : aucun état hover, seulement une
+   ombre douce pour les détacher du fond. Les pictogrammes sont décoratifs
+   (aria-hidden) : le libellé visible porte l'information. */
+.payments {
+  padding-block: clamp(2.5rem, 5vw, 3.5rem);
+  background:
+    radial-gradient(
+      80% 120% at 50% 0%,
+      rgba(214, 234, 239, 0.6),
+      transparent 70%
+    ),
+    linear-gradient(180deg, var(--white) 0%, var(--sky-2) 100%);
+  border-top: 1px solid var(--line);
+}
+.payments__head {
+  max-width: 640px;
+  margin: 0 auto clamp(1.5rem, 3vw, 2rem);
+  text-align: center;
+}
+.payments__title {
+  font-size: clamp(1.4rem, 3vw, 1.85rem);
+  margin-bottom: 0.35rem;
+}
+.payments__lead {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.payments__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+.payments__item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 0.9rem 1rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+.payments__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+}
+/* Teintes de fond très claires + pictogramme dans la variante AA de la
+   palette : chaque icône garde au moins 4:1 sur sa pastille. */
+.payments__icon--card {
+  background: #fbf0ec;
+  color: var(--terracotta-btn);
+}
+.payments__icon--cheque {
+  background: #edf4ef;
+  color: var(--green-btn);
+}
+.payments__icon--vacances {
+  background: #faf5e2;
+  color: #8a6a12;
+}
+.payments__icon--transfer {
+  background: #eaf5f8;
+  color: var(--cyan-dk);
+}
+.payments__label {
+  min-width: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ink);
+}
+
+/* 4 tuiles → 2×2 sur tablette → 2×2 compact sur téléphone */
+@media (max-width: 1024px) {
+  .payments__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  /* Double colonne compacte : 2×2 sur téléphone. */
+  .payments__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+  /* Tuile compactée pour loger le texte sur une colonne étroite :
+     pastille 40px au lieu de 52px, padding et gap réduits. */
+  .payments__item {
+    padding: 0.65rem 0.6rem;
+    gap: 0.6rem;
+  }
+  .payments__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+  .payments__icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  .payments__label {
+    font-size: 0.82rem;
+  }
+}
+
+/* ---------- 18c. Documents à télécharger (§ Infos pratiques) ---------- */
+/* La section réutilise tout le gabarit des paiements ; seul diffère le fait
+   que les tuiles sont des liens (téléchargement de PDF) : état hover/focus
+   et focus visible, comme les cartes cliquables du site. La <a> reprend les
+   mêmes propriétés que la <li> de base (flex, padding, fond) pour que les
+   tuiles restent identiques visuellement. */
+.payments__item-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 0.9rem 1rem;
+  margin: -0.9rem -1rem; /* la <a> occupe toute la tuile : la <li> garde son padding */
+  background: none;
+  border-radius: var(--radius-sm);
+  color: inherit;
+  text-decoration: none;
+}
+.payments__item--doc:focus-visible {
+  outline: 2px solid var(--terracotta-btn);
+  outline-offset: 2px;
+}
+@media (hover: hover) {
+  .payments__item--doc:hover {
+    background: #fffdf9;
+  }
+  .payments__item--doc:hover .payments__icon--doc {
+    transform: translateY(2px);
+  }
+}
+/* Icône de téléchargement : petite translation au survol (téléchargé), sans
+   autre décor. Ses teintes varient par item via l'une des pastilles existantes. */
+.payments__icon--doc {
+  background: #eaf5f8;
+  color: var(--cyan-dk);
+  transition: transform 180ms var(--ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  .payments__icon--doc {
+    transition: none;
+  }
+  .payments__item--doc:hover .payments__icon--doc {
+    transform: none;
+  }
+}
+@media (max-width: 560px) {
+  /* La <a> garde le même -padding -margin que la tuile sur téléphone. */
+  .payments__item-inner {
+    padding: 0.65rem 0.6rem;
+    margin: -0.65rem -0.6rem;
+    gap: 0.6rem;
+  }
+}
+
+/* ---------- 22. Footer ---------- */
+.footer {
+  background: var(--forest);
+  color: rgba(255, 255, 255, 0.8);
+}
+.footer__grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.4fr;
+  gap: 2.5rem;
+  padding-block: clamp(3rem, 6vw, 4.5rem);
+}
+.footer h3 {
+  color: #fff;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1rem;
+}
+.footer__brand {
+  text-align: center;
+}
+.footer__brand p {
+  margin-top: 1rem;
+  max-width: 30ch;
+  margin-inline: auto;
+}
+.footer__address {
+  margin-top: 1.25rem;
+  font-style: normal;
+  line-height: 1.5;
+}
+.footer__hours {
+  margin-top: 0.75rem;
+}
+.logo--footer {
+  color: #fff;
+}
+/* La marque vit en permanence sur le fond forêt du pied de page : même
+   habit blanc que la barre de l'en-tête posée sur une zone sombre (cf. §8),
+   mais sans la bascule d'état — le footer n'a qu'un seul régime d'éclairage. */
+.logo--footer .logo__mark img {
+  filter: brightness(0) invert(1);
+}
+.footer__col ul {
+  display: grid;
+  gap: 0.6rem;
+}
+.footer__col a {
+  color: rgba(255, 255, 255, 0.75);
+}
+.footer__col a:hover {
+  color: #fff;
+}
+.footer__map-visual {
+  aspect-ratio: 4/3;
+  border-radius: var(--radius-sm);
+  background:
+    linear-gradient(0deg, rgba(29, 59, 45, 0.3), rgba(29, 59, 45, 0.3)),
+    repeating-linear-gradient(45deg, #2f5570 0 12px, #274a63 12px 24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+}
+.footer__map-visual::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50% 50% 50% 0;
+  background: var(--terracotta);
+  transform: translate(-50%, -50%) rotate(-45deg);
+  box-shadow: 0 0 0 6px rgba(218, 108, 83, 0.3);
+}
+.footer__partners {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  padding-bottom: 2rem;
+}
+.partner {
+  width: 90px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+}
+.footer__legal {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+.footer__legal-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1.25rem;
+  font-size: 0.85rem;
+}
+/* Ligne des crédits photo (licences obligatoires) : plus discrète que la
+   ligne des droits et indépendante du flex © / réseaux sociaux */
+.footer__legal-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.footer__credits {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+.footer__social {
+  display: flex;
+  gap: 1.25rem;
+}
+/* Icônes des réseaux (glyphes du sprite, cf. <use href="#i-…">) :
+   place-items centre le « f » au viewBox étroit, currentColor porte la
+   teinte — un seul endroit à changer pour les deux réseaux. */
+.footer__social a {
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.75);
+  transition: color var(--speed) var(--ease);
+}
+.footer__social a:hover,
+.footer__social a:focus-visible {
+  color: #fff;
+}
+/* Liens de conformité (mentions légales, confidentialité) : même ton que
+   les liens de la colonne, grand souligné discret pour les démarquer des
+   réseaux sociaux à droite de la même ligne */
+.footer__legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+.footer__legal-links a {
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.35);
+  text-underline-offset: 3px;
+}
+.footer__legal-links a:hover {
+  color: #fff;
+}
+
+/* ---------- 23. Bouton retour en haut ---------- */
+.to-top {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 40;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--terracotta);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition:
+    opacity var(--speed) var(--ease),
+    transform var(--speed) var(--ease),
+    visibility var(--speed) var(--ease);
+}
+.to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.to-top:hover {
+  background: var(--terracotta-dk);
+}
+
+/* ---------- 23b. Réservation : CTA fixe + panneau calendrier ----------
+   La pastille est opaque (forêt) : lisible sur toutes les sections, claires
+   comme sombres, sans dépendre de data-theme. Elle ouvre un panneau ancré
+   juste au-dessus d'elle — feuille basse en ≤860px, panneau à deux calendriers
+   en ≥861px. Les dates vivent dans un état unique : la surbrillance du départ,
+   de la plage et de l'arrivée se rejoue à l'identique sur les deux calendriers
+   desktop (le rendu est le même composant, appelé deux fois). */
+:root {
+  /* Hauteur de la pastille : sert de décalage au panneau et à la réserve de
+     bas de page. --booking-gap = air entre la pastille, le panneau et le bord. */
+  --booking-cta-h: 50px;
+  --booking-gap: 18px;
+}
+
+/* Réserve la place de la pastille en fin de page : rien ne passe dessous */
+body {
+  padding-bottom: calc(
+    var(--booking-cta-h) + var(--booking-gap) + env(safe-area-inset-bottom)
+  );
+}
+
+/* Ouverture : le fond ne défile plus (on compense la largeur de la barre de
+   défilement pour éviter le décalage horizontal à la disparition). La
+   compensation est exposée aux couches via --booking-shift, portée à la
+   racine : réservation (.booking) et contact (.contact) la lisent toutes
+   deux par héritage. */
+html.is-booking-open,
+html.is-contact-open {
+  overflow: hidden;
+  padding-right: var(--scrollbar-w, 0px);
+  --booking-shift: var(--scrollbar-w, 0px);
+}
+
+/* Voile + panneaux + barre d'actions partagent une couche fixe ; seuls les
+   enfants actifs captent les clics, le conteneur les laisse passer. */
+.booking,
+.contact {
+  position: fixed;
+  inset: 0;
+  z-index: 60; /* au-dessus du header (50) et de .to-top (40) */
+  pointer-events: none;
+}
+
+.booking__scrim,
+.contact__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(29, 59, 45, 0.55);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: auto;
+  /* Fermeture : fondu plus lent, et `visibility` masquée seulement à la fin
+     (durée 0s + délai) — le voile ne doit pas disparaître avant le panneau. */
+  transition:
+    opacity 0.45s var(--ease-exit),
+    visibility 0s linear 0.45s;
+}
+.booking.is-open .booking__scrim,
+.contact.is-open .contact__scrim {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity var(--speed) var(--ease),
+    visibility 0s;
+}
+
+/* ---- La barre d'actions : pastille réservation + bouton contact ----
+   Reprend le centrage de l'ancienne pastille : marges automatiques (insensible
+   à la barre de défilement, le transform reste libre pour le survol des .btn).
+   Le conteneur ne capte rien (pointer-events), seuls les boutons le font. */
+.booking__bar {
+  position: absolute;
+  left: 0;
+  right: var(--booking-shift, 0px);
+  margin-inline: auto;
+  width: fit-content;
+  bottom: calc(var(--booking-gap) + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  z-index: 2;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.booking__bar > * {
+  pointer-events: auto;
+}
+
+.booking__cta {
+  background: var(--forest);
+  color: #fff;
+  /* Liseré clair discret : invisible sur les fonds clairs, il amorce le
+     détachement sur les fonds sombres. C'est aussi le repli sans JS, où la
+     bascule is-on-dark (posée au scroll) n'a pas lieu. */
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 14px 34px rgba(29, 59, 45, 0.36);
+}
+.booking__cta:hover {
+  background: var(--forest-2);
+}
+/* Anneau de focus à deux tons (jaune sur halo forêt) : net sur fond clair
+   comme sur fond sombre, contrairement au cyan seul. */
+.booking__cta:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 3px;
+  box-shadow:
+    0 0 0 6px rgba(29, 59, 45, 0.55),
+    0 14px 34px rgba(29, 59, 45, 0.36);
+}
+/* Deux dates posées : « Valider » passe en terracotta (action prête) */
+.booking__cta.is-valid {
+  background: var(--terracotta-btn);
+  border-color: var(--terracotta-btn);
+}
+.booking__cta.is-valid:hover {
+  background: var(--terracotta-btn-hv);
+  border-color: var(--terracotta-btn-hv);
+}
+
+/* ---- Pastille sur zone sombre (classe posée en scroll, cf. §4b du JS) ----
+   Le fond forêt de la pastille se confondait avec le fond forêt du hero, du
+   rideau et du pied de page. On éclaircit donc le fond et on l'entoure d'un
+   liseré clair : c'est le liseré qui détache (blanc/forêt = 15,6:1), le fond
+   restant assez soutenu pour que le libellé blanc tienne AA (6,3:1 sur
+   --green-dk ; 3,9:1 seulement sur --green, d'où ce choix plus foncé).
+   Le fond n'est PAS ré-éclairci au survol, pour la même raison : c'est le
+   liseré qui répond, avec la levée des .btn. */
+.booking__cta.is-on-dark {
+  background: var(--green-dk);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+.booking__cta.is-on-dark:hover {
+  border-color: #fff;
+}
+/* « Valider » sur zone sombre : terracotta conservé (blanc dessus = 4,5:1) ;
+   terracotta/forêt ne fait que 2,7:1, c'est donc encore le liseré qui porte. */
+.booking__cta.is-on-dark.is-valid {
+  background: var(--terracotta-btn);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+.booking__cta.is-on-dark.is-valid:hover {
+  background: var(--terracotta-btn-hv);
+}
+
+/* ---- Le bouton contact ----
+   Pastille claire à liseré forêt : lisible telle quelle sur les fonds clairs
+   comme sombres (texte forêt/blanc = 15,6:1), donc PAS de bascule is-on-dark.
+   Sur zone sombre le liseré forêt devient blanc pour rester visible. */
+.booking__contact-cta {
+  background: #fff;
+  color: var(--forest);
+  border-color: var(--forest);
+  box-shadow: 0 14px 34px rgba(29, 59, 45, 0.28);
+}
+.booking__contact-cta:hover {
+  background: var(--sky-2);
+  border-color: var(--forest-2);
+}
+.booking__contact-cta:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 3px;
+  box-shadow:
+    0 0 0 6px rgba(29, 59, 45, 0.55),
+    0 14px 34px rgba(29, 59, 45, 0.28);
+}
+
+/* ---- Les panneaux (calendrier + contact) ---- */
+.booking__panel,
+.contact__panel {
+  position: absolute;
+  left: 0;
+  right: var(--booking-shift, 0px);
+  margin-inline: auto;
+  bottom: calc(
+    var(--booking-cta-h) + var(--booking-gap) * 2 + env(safe-area-inset-bottom)
+  );
+  transform: translateY(20px) scale(0.985);
+  width: min(720px, calc(100% - 2 * var(--gutter)));
+  max-height: min(78vh, 640px);
+  overflow-y: auto;
+  z-index: 1;
+  pointer-events: auto;
+  padding: 1.25rem;
+  background: #fff;
+  color: var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  /* Fermeture : le panneau redescend doucement (20 px + léger recul) et ne
+     commence à se dissoudre qu'après 60 ms — il reste lisible pendant que le
+     mouvement s'amorce. `visibility` attend la fin (durée 0s + délai) pour
+     éviter une disparition sèche. */
+  transition:
+    opacity 0.38s var(--ease-exit) 0.06s,
+    transform var(--speed-exit) var(--ease-exit),
+    visibility 0s linear var(--speed-exit);
+}
+.booking.is-open .booking__panel,
+.contact.is-open .contact__panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  /* Ouverture : `visibility` bascule SANS transition. À la fraction 0 d'une
+     transition, la valeur calculée est encore « hidden » : le focus demandé
+     juste après l'ouverture (premier champ) était donc refusé par le
+     navigateur, et le focus restait sur <body>. */
+  transition:
+    opacity var(--speed) var(--ease),
+    transform var(--speed) var(--ease),
+    visibility 0s;
+}
+/* Le formulaire de contact n'a pas besoin de la largeur des deux calendriers */
+.contact__panel {
+  width: min(560px, calc(100% - 2 * var(--gutter)));
+}
+
+.booking__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+.booking__title {
+  margin: 0;
+  font-size: 1.3rem;
+}
+.booking__close {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--sky-2);
+  color: var(--forest);
+  transition: background var(--speed) var(--ease);
+}
+.booking__close:hover {
+  background: var(--sky);
+}
+
+/* ---- Les deux champs (Départ / Arrivée) ---- */
+.booking__fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.booking__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  align-items: flex-start;
+  padding: 0.6rem 0.9rem;
+  text-align: left;
+  font-family: var(--font-body);
+  background: #fff;
+  color: var(--ink);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  transition:
+    border-color var(--speed) var(--ease),
+    background var(--speed) var(--ease);
+}
+.booking__field:hover {
+  border-color: var(--green);
+}
+.booking__field.is-filled {
+  border-color: var(--forest);
+}
+/* Champ qui pilote le calendrier (mobile : le seul affiché) */
+.booking__field.is-active {
+  border-color: var(--terracotta-btn);
+}
+.booking__field-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.booking__field-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--forest);
+}
+
+/* ---- Type d'emplacement (Emplacement / Mobil-home / Chalet) ----
+     Un seul bouton coché (aria-checked) pilote le paramètre « type »
+     envoyé au site de réservation externe. */
+.booking__types {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.booking__type {
+  padding: 0.55rem 0.4rem;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--ink);
+  background: #fff;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  transition:
+    border-color var(--speed) var(--ease),
+    background var(--speed) var(--ease);
+}
+.booking__type:hover {
+  border-color: var(--green);
+}
+.booking__type.is-selected,
+.booking__type[aria-checked="true"] {
+  border-color: var(--forest);
+  background: var(--sky-2);
+}
+/* Petit mobile : « Mobil-home » justesse étroite, on resserre */
+@media (max-width: 400px) {
+  .booking__type {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.2rem;
+  }
+}
+
+/* ---- Les calendriers ---- */
+.booking__calendars.is-duo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+.cal {
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+.cal__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.cal__month {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--forest);
+  text-transform: capitalize;
+}
+.cal__arrow {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--forest);
+  transition:
+    background var(--speed) var(--ease),
+    border-color var(--speed) var(--ease);
+}
+.cal__arrow:hover:not(:disabled) {
+  background: var(--sky-2);
+  border-color: var(--green);
+}
+.cal__arrow:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cal__grid {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+.cal__grid th {
+  padding: 0.25rem 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.cal__grid td {
+  padding: 3px 0;
+  text-align: center;
+}
+/* Surbrillance de la plage : terracotta SEMI-TRANSPARENT sur la cellule
+   (les jours de « présence » entre les deux dates), liseré terracotta plein
+   réservé aux deux extrémités (posées sur le bouton). Les fonds ne
+   s'appliquent qu'une fois les DEUX dates connues (has-range).
+   Forest (#1d3b2d) par-dessus la teinte composée ≈ 6,5:1 → AA confortable. */
+.cal__cell.is-range,
+.cal__grid.has-range .cal__cell.is-start,
+.cal__grid.has-range .cal__cell.is-end {
+  background: rgba(192, 85, 66, 0.45);
+}
+.cal__grid.has-range .cal__cell.is-start {
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+}
+.cal__grid.has-range .cal__cell.is-end {
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+}
+.cal__cell.is-today .cal__day {
+  box-shadow: inset 0 0 0 2px var(--green);
+}
+.cal__day {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--ink);
+  transition:
+    background var(--speed) var(--ease),
+    color var(--speed) var(--ease);
+}
+.cal__day:hover:not(:disabled) {
+  background: var(--sky-2);
+}
+.cal__cell.is-range .cal__day {
+  color: var(--forest);
+  font-weight: 600;
+}
+.cal__day.is-edge {
+  background: var(--terracotta-btn);
+  color: #fff;
+  font-weight: 600;
+}
+.cal__day.is-edge:hover {
+  background: var(--terracotta-btn-hv);
+}
+.cal__day:disabled {
+  opacity: 0.4;
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.booking__hint {
+  min-height: 1.2em;
+  margin: 0.85rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ---- Le formulaire de contact ----
+   Mêmes matériaux que le calendrier : étiquettes uppercasse comme les champs
+   Départ/Arrivée, filets --line, radius-sm. */
+.contact__form {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 0.25rem;
+}
+.contact__row {
+  display: grid;
+  gap: 0.3rem;
+}
+.contact__label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.contact__input {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--ink);
+  background: #fff;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--speed) var(--ease);
+}
+.contact__input:hover {
+  border-color: var(--green);
+}
+.contact__input:focus {
+  outline: none;
+  border-color: var(--forest);
+}
+.contact__textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+.contact__send {
+  justify-self: start;
+  margin-top: 0.25rem;
+}
+.contact__success {
+  margin: 0.25rem 0 0;
+  font-weight: 600;
+  color: var(--forest);
+}
+
+/* Utile aux lecteurs d'écran seulement (titres de calendrier, etc.) */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* La pastille occupe le bas : on remonte « retour en haut » pour qu'ils ne se
+   chevauchent pas sur petit écran. */
+@media (max-width: 860px) {
+  .to-top {
+    bottom: calc(
+      var(--booking-cta-h) + var(--booking-gap) * 2 +
+        env(safe-area-inset-bottom)
+    );
+  }
+}
+
+/* Deux pastilles côte à côte : sur les très petits écrans on resserre
+   padding et typo pour que « Réservez votre séjour » + « Nous contacter »
+   tiennent sur un écran de 375px. */
+@media (max-width: 480px) {
+  .booking__bar {
+    gap: 0.45rem;
+  }
+  .booking__cta,
+  .booking__contact-cta {
+    padding: 0.7rem 0.95rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* ---------- 24. Animations au scroll (reveal) ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.7s var(--ease),
+    transform 0.7s var(--ease);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ============================================================
+   25. RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+  :root {
+    --loc-media-max: 288px;
+    --loc-media-idle: 260px;
+  }
+  .footer__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  /* Navigation et Prestations côte à côte : la marque et la carte
+     occupent toute la largeur de part et d'autre. */
+  .footer__brand,
+  .footer__map {
+    grid-column: 1 / -1;
+  }
+  /* Locations : 2 slides visibles sur tablette */
+  .loc-card {
+    flex-basis: calc((100% - 1.5rem) / 2);
+  }
+  .loc-card.is-active {
+    flex-basis: calc(((100% - 1.5rem) / 2) * 1.44);
+  }
+  .loc-card__media {
+    height: 260px;
+  }
+  /* Deck : repli ≤1024px (mobile + tablette) = paires photo→texte.
+     Les deux colonnes deviennent display:contents : les 5 figures et
+     5 légendes sont remontées dans .deck__layout, une colonne flex, et
+     reliées 2 à 2 par order via l'attribut data-index déjà posé
+     (figure n → 2n, légende n → 2n+1). Couvre aussi tablette, qui perd
+     le deck sticky au profit du flux apparié. */
+  .deck__stack,
+  .deck__captions {
+    display: contents;
+  }
+  .deck__layout {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .deck__card[data-index="0"] {
+    order: 0;
+  }
+  .deck__caption[data-index="0"] {
+    order: 1;
+  }
+  .deck__card[data-index="1"] {
+    order: 2;
+  }
+  .deck__caption[data-index="1"] {
+    order: 3;
+  }
+  .deck__card[data-index="2"] {
+    order: 4;
+  }
+  .deck__caption[data-index="2"] {
+    order: 5;
+  }
+  .deck__card[data-index="3"] {
+    order: 6;
+  }
+  .deck__caption[data-index="3"] {
+    order: 7;
+  }
+  .deck__card[data-index="4"] {
+    order: 8;
+  }
+  .deck__caption[data-index="4"] {
+    order: 9;
+  }
+  /* Pas d'épinglage ni rotation dans ce repli : photos et légendes en flux. */
+  .deck__card {
+    position: relative;
+    top: auto;
+    width: 100%;
+    margin-bottom: 0;
+    filter: none !important;
+  }
+  .deck__card .img {
+    transform: none !important;
+    aspect-ratio: 16/10;
+  }
+  .deck__caption {
+    min-height: 0;
+    opacity: 1;
+    margin-bottom: 0;
+    position: static;
+    top: auto;
+  }
+  /* Annule la règle :last-child (spécificité 0-2-0) : restaure le repli
+     (min-height: 0) */
+  .deck__caption:last-child {
+    min-height: 0;
+  }
+  /* Apparition au scroll (≤1024px seulement) : opacité + léger recul,
+     déclenchés par le même IntersectionObserver que les .reveal.
+     Desktop : ces règles n'existent pas — le deck sticky épinglé reste
+     intact. Sans JS : rien ne se cache. Mouvement réduit : le JS pose
+     .is-visible d'office et le §26 tue les transitions. */
+  .js .deck__card,
+  .js .deck__caption {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 0.7s var(--ease),
+      transform 0.7s var(--ease);
+  }
+  /* Arrivée latérale alternée : la photo vole d'un bord, le texte arrive
+     du bord opposé ; le sens bascule d'une paire à l'autre (01 → gauche /
+     02 → droite / 03 → gauche…). Placées après la base commune : même
+     spécificité, la dernière déclaration gagne. `is-visible` ci-dessous
+     remet transform:none, d'où le retour en position. */
+  .js .deck__card,
+  .js .deck__caption[data-index="0"],
+  .js .deck__caption[data-index="2"],
+  .js .deck__caption[data-index="4"] {
+    transform: translateX(-40px);
+  }
+  .js .deck__card[data-index="1"],
+  .js .deck__card[data-index="3"] {
+    transform: translateX(40px);
+  }
+  .js .deck__caption {
+    transform: translateX(40px);
+  }
+  .js .deck__caption[data-index="1"],
+  .js .deck__caption[data-index="3"] {
+    transform: translateX(-40px);
+  }
+  .js .deck__card.is-visible,
+  .js .deck__caption.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 860px) {
+  :root {
+    --loc-media-max: 252px;
+    --loc-media-idle: 240px;
+  }
+  .intro__grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Header : burger (si JS) + panneau déroulant sous le header ; sans JS on
+     garde la nav compacte en repli.
+     Barre plus basse qu'avant : 60px en haut de page (cf. --header-h), 56px une
+     fois scrollée — le bandeau ne prend plus qu'un dixième de la hauteur d'un
+     téléphone. La marque reste à 36px, elle y rentre avec de l'air. */
+  .header.is-scrolled {
+    height: 56px;
+  }
+  /* Ici la plaque de l'ouverture est OPAQUE, pas translucide : le panneau du
+     burger s'ouvre juste dessous, en blanc plein (#fff) avec la même ombre —
+     barre et panneau font donc un seul bloc blanc. Un blanc à 60 % se verrait
+     comme une bande au-dessus du panneau, et le flou n'a plus d'objet sur de
+     l'opaque. */
+  .js .header.is-nav-open::before {
+    background: #fff;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .header__inner {
+    gap: 0.5rem;
+  }
+  .header__nav ul {
+    gap: 0.9rem;
+  }
+  .header__nav a {
+    font-size: 0.82rem;
+  }
+  .logo__text {
+    display: none;
+  } /* on garde le mark seul pour dégager de la place */
+  .logo__mark img {
+    height: 36px;
+  } /* logo PNG plus large que l'ancien SVG */
+  /* La marque suit le même jeton --logo-h qu'en desktop (36px ici, cf. §9).
+     Elle est posée en absolu au milieu de la barre : en flux, elle se centrait
+     entre le burger et le CTA, qui n'ont pas la même largeur, et n'était donc
+     pas pile au milieu. */
+  .header {
+    --logo-h: 36px;
+  }
+  .header .logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2; /* reste cliquable : CTA et burger sont sur les côtés */
+  }
+
+  /* Bouton burger : 44×44 (cible tactile), plein terracotta comme la pilule
+     desktop, arrondi en disque — même token que la pilule ouverte desktop —
+     3 traits → croix à l'ouverture. */
+  .js .header__burger {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--terracotta-btn);
+    cursor: pointer;
+    margin-inline-start: calc(30px - var(--gutter)); /* burger à pile 30px du bord gauche */
+  }
+  .header__burger-bars {
+    position: relative;
+    width: 22px;
+    height: 2px;
+  }
+  .header__burger-bars span {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    transition:
+      transform var(--speed) var(--ease),
+      opacity var(--speed) var(--ease);
+  }
+  .header__burger-bars span:nth-child(1) {
+    top: -7px;
+  }
+  .header__burger-bars span:nth-child(3) {
+    top: 7px;
+  }
+  /* Sur fond terracotta plein (cf. ci-dessus), les trois traits restent blancs
+     dans tous les cas — y compris panneau ouvert : c'est le fond du bouton,
+     pas celui de la barre, qui fait foi pour le contraste. */
+  .js .header__burger {
+    color: #fff;
+  }
+  .header.is-nav-open .header__burger-bars span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .header.is-nav-open .header__burger-bars span:nth-child(2) {
+    opacity: 0;
+  }
+  .header.is-nav-open .header__burger-bars span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* Panneau de nav : dropdown blanc collant sous le header (pas de drawer).
+     visibility:hidden en repli = les liens fermés ne sont pas tabulables. */
+  .js .header__nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+    padding: 0.5rem var(--gutter) 1rem;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition:
+      opacity var(--speed) var(--ease),
+      transform var(--speed) var(--ease),
+      visibility 0s linear var(--speed);
+  }
+  .header.is-nav-open .header__nav {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--speed) var(--ease),
+      transform var(--speed) var(--ease),
+      visibility 0s;
+  }
+  /* Les deux moitiés de nav du desktop (§9c) redeviennent ici une seule
+     colonne : même écart (0.25rem) entre les deux groupes qu'entre deux
+     liens, le panneau est donc identique à ce qu'il était. */
+  .js .header__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  /* Liens du panneau : colonne verticale, forêt sur blanc — le panneau a son
+     propre fond, la teinte de la barre ne le concerne pas */
+  .js .header__nav ul {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  .js .header__nav a {
+    color: var(--forest);
+    font-size: 0.95rem;
+    padding: 0.5rem 0;
+  }
+  /* Filet de sécurité avec 6 liens : la nav ouverte ne déborde plus jamais
+     de l'écran (petits téléphones, mode paysage) — elle est défilable à la
+     moindre limite. */
+  .js .header.is-nav-open .header__nav {
+    max-height: calc(100dvh - var(--header-h));
+    overflow-y: auto;
+  }
+
+  /* Rideau épinglé aussi sur mobile : contenu en haut, décollé du héro
+     par une marge, et rideau animé confiné à la moitié basse — même
+     scrub que le desktop (cf. §12 et le JS « Rideau sipario »). */
+  .sipario {
+    height: 200vh; /* zone de scroll pour le scrub (desktop : 220vh) */
+  }
+  .sipario__sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+  .sipario__content {
+    align-self: start; /* colle le contenu en haut du bloc épinglé */
+    margin-top: calc(var(--header-h) + 3rem); /* décolle du héro */
+  }
+  .sipario__panel {
+    display: block; /* réactivé : le rideau anime la moitié basse */
+    top: 50%;
+  }
+
+  /* Features : pas d'empilement épinglé sur mobile */
+  .feature {
+    position: relative;
+    top: auto !important;
+    margin-bottom: 1.5rem;
+  }
+  .feature:last-child {
+    margin-bottom: 0;
+  }
+  .feature {
+    grid-template-columns: 1fr;
+  }
+  .feature--reverse .feature__media {
+    order: 0;
+  }
+  .feature__media {
+    aspect-ratio: 16/10;
+  }
+
+  .history__inner {
+    grid-template-columns: 1fr;
+  }
+  .history__media {
+    aspect-ratio: 16/10;
+  }
+
+  /* Locations : 1 slide visible, la carte active occupe presque tout l'écran */
+  .loc-card {
+    flex-basis: 82%;
+  }
+  .loc-card.is-active {
+    flex-basis: 100%;
+  }
+  .loc-card__media {
+    height: 240px;
+  }
+}
+
+@media (max-width: 560px) {
+  /* Header très compact : nav resserrée, CTA réduit */
+  .header__nav ul {
+    gap: 0.6rem;
+  }
+  .header__nav a {
+    font-size: 0.72rem;
+  }
+  .footer__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem 1.5rem;
+  }
+  /* Navigation et Prestations restent côte à côte sur mobile. */
+  .footer__brand,
+  .footer__map {
+    grid-column: 1 / -1;
+  }
+  /* Composition centrée verticale du bloc marque sur téléphone :
+     la mise en colonne du logo (marque au-dessus du texte) sert la
+     largeur pleine gagnée via grid-column: 1 / -1 ci-dessus. */
+  .footer__brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .logo--footer {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .logo--footer .logo__mark img {
+    height: 64px;
+  }
+  /* Ligne d'accent terracotta entre le logo et la baseline : le seul
+     élément signature du bloc, tout le reste reste calme. */
+  .footer__brand > p:first-of-type {
+    padding-top: 1rem;
+    background: linear-gradient(
+        to bottom,
+        var(--terracotta) 0 2px,
+        transparent 2px
+      )
+      50% 0.75rem / 40px 2px no-repeat;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .footer__address,
+  .footer__hours {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  /* Filet discret entre adresse et horaires : on découpe, on n'empile pas. */
+  .footer__hours {
+    padding-top: 0.75rem;
+  }
+  .footer__hours::before {
+    content: "";
+    display: block;
+    width: 48px;
+    height: 1px;
+    margin: 0 auto 0.75rem;
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .loc-card {
+    flex-basis: 88%;
+  }
+  .loc-card.is-active {
+    flex-basis: 100%;
+  }
+}
+
+/* ---------- 26. Accessibilité : mouvement réduit ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  /* Panneaux (calendrier + contact) : sortie instantanée. Sans cela, le délai
+     de `visibility` resterait actif et laisserait un panneau invisible mais
+     cliquable par-dessus la page pendant la durée de la sortie. */
+  .booking__panel,
+  .contact__panel,
+  .booking__scrim,
+  .contact__scrim {
+    transition: none !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .kenburns {
+    animation: none !important;
+  }
+  /* Hero : le script ne laisse que la première image du carrousel et ne
+     branche pas la vidéo, mais on neutralise quand même la dérive — comme
+     ça, le repli tient même si le JavaScript ne tourne pas. */
+  .hero__slide {
+    animation: none !important;
+  }
+  /* Rideau ouvert d'emblée, sans animation (JS ajoute aussi .no-anim) */
+  .sipario {
+    height: auto;
+  }
+  .sipario__sticky {
+    position: relative;
+    height: auto;
+    min-height: 80vh;
+    padding: 5rem 0;
+  }
+  .sipario__panel {
+    display: none;
+  }
+  /* Deck : pas d'épinglage en mouvement réduit (ni photo, ni légende) —
+     retour au flux simple à deux colonnes, tout le texte visible */
+  .deck__card {
+    position: relative;
+    top: auto;
+    filter: none !important;
+  }
+  .deck__card .img {
+    transform: none !important;
+  }
+  .deck__stack {
+    padding-block: 1rem;
+  }
+  .deck__captions {
+    padding-block: var(--deck-pad, 20vh);
+  }
+  .deck__caption {
+    opacity: 1;
+    position: static;
+    top: auto;
+  }
+  .deck__caption:last-child {
+    position: static;
+  }
+  /* Blocs alternés : comme le deck, ni épinglage ni échelle en mouvement
+     réduit → le fondu au recouvrement (piloté en JS) disparaît avec
+     l'empilement, et la pile redevient un simple flux vertical lisible.
+     `!important` : nécessaire pour battre les `top` croissants de
+     .feature:nth-child(n) (même schéma que le repli mobile, §25). */
+  .feature {
+    position: relative;
+    top: auto !important;
+  }
+  /* Locations : pas d'agrandissement (toutes les cartes identiques) */
+  .loc-card__media {
+    transition: none;
+  }
+  .loc-card.is-active .loc-card__media {
+    height: var(--loc-media-idle);
+  }
+  .loc-card {
+    transition: none;
+  }
+  /* Header : ouverture/fermeture instantanées, sans délai de visibility ni
+     échelonnement des liens (le bandeau se déploie d'un coup) */
+  .header__nav,
+  .header__nav-group li,
+  .header__burger-bars span {
+    transition-delay: 0s !important;
+  }
+}
+
+/* ---------- 28. Pages légales (mentions légales, confidentialité) ----------
+   Pages indépendantes mais habillées par le même design system : bandeau
+   d'en-tête commun (§8), conteneur, badges, boutons, footer (§22). Aucun
+   liseré particulier : la maîtrise passe par la typographie et l'air. */
+.legal-main {
+  background: var(--sky-2);
+  padding-block: clamp(3rem, 7vw, 5rem);
+}
+.legal-main__inner {
+  max-width: 74ch;
+  margin-inline: auto;
+}
+
+.legal-main h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  color: var(--ink);
+  margin: 1rem 0 0.5rem;
+}
+.legal-main .lead {
+  margin-bottom: 0;
+}
+.legal-doc {
+  margin-top: 2.75rem;
+  display: grid;
+  gap: 2.5rem;
+}
+.legal-doc h2 {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  color: var(--forest);
+  margin-bottom: 0.75rem;
+}
+.legal-doc h3 {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--forest);
+  margin: 1.25rem 0 0.5rem;
+}
+.legal-doc p,
+.legal-doc li {
+  color: var(--muted);
+  line-height: 1.7;
+}
+.legal-doc ul {
+  padding-left: 1.25rem;
+  list-style: disc;
+  display: grid;
+  gap: 0.4rem;
+}
+/* Champs laissés au client : encadrés décor amortie (DGPD : « à compléter ») */
+.legal-doc .placeholder {
+  color: var(--terracotta-btn);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.legal-note {
+  margin-top: 0.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px dashed var(--terracotta);
+  border-radius: var(--radius-sm);
+  background: rgba(218, 108, 83, 0.07);
+  font-size: 0.9rem;
+}
+/* En-tête réutilisé tel quel (§8) : position sticky sur fond clair, encre
+   forêt, aucun basculement sombre à gérer sur ces pages */
+
+/* ---------- 29. Sélecteur de langue ----------
+   Pilule drapeau (FR par défaut) à droite du bandeau, ouvrant un petit menu
+   FR / EN (UK) / NL. Le fond du bouton EST le drapeau de la langue active —
+   SVG inline en data URI (zéro requête, net à toutes les échelles).
+   Sans JS : la classe .js est absente → tout le module est masqué, le site
+   reste en français. */
+:root {
+  /* Taille de la pastille drapeau : sert aussi au calcul d'ancrage du bloc
+     social (§29b), qui s'aligne sur son bord gauche. */
+  --lang-btn: 40px;
+  --flag-fr: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3Crect width='1' height='2' fill='%23002554'/%3E%3Crect x='1' width='1' height='2' fill='%23ffffff'/%3E%3Crect x='2' width='1' height='2' fill='%23CE1126'/%3E%3C/svg%3E");
+  --flag-en: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'%3E%3Crect width='60' height='30' fill='%23012169'/%3E%3Cpath d='M0 0l60 30M60 0L0 30' stroke='%23ffffff' stroke-width='6'/%3E%3Cpath d='M0 0l60 30M60 0L0 30' stroke='%23C8102E' stroke-width='3'/%3E%3Cpath d='M30 0v30M0 15h60' stroke='%23ffffff' stroke-width='10'/%3E%3Cpath d='M30 0v30M0 15h60' stroke='%23C8102E' stroke-width='6'/%3E%3C/svg%3E");
+  --flag-nl: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3Crect width='3' height='0.6667' fill='%23AE1C28'/%3E%3Crect y='0.6667' width='3' height='0.6667' fill='%23ffffff'/%3E%3Crect y='1.3333' width='3' height='0.6667' fill='%2321468B'/%3E%3C/svg%3E");
+}
+html:not(.js) .lang {
+  display: none;
+}
+.lang {
+  position: relative;
+  flex-shrink: 0;
+}
+.lang__btn {
+  width: var(--lang-btn);
+  height: var(--lang-btn);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  background-color: var(--sky);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: 0 2px 10px rgba(29, 59, 45, 0.28);
+  padding: 0;
+  transition:
+    transform var(--speed) var(--ease),
+    box-shadow var(--speed) var(--ease);
+}
+.lang__btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(29, 59, 45, 0.32);
+}
+/* La langue active dicte l'image de fond du bouton */
+.lang__btn--fr {
+  background-image: var(--flag-fr);
+}
+.lang__btn--en {
+  background-image: var(--flag-en);
+}
+.lang__btn--nl {
+  background-image: var(--flag-nl);
+}
+
+/* Le menu déroulant : blanc plein (lisible sur la photo du bandeau comme
+   sur la plaque d'ouverture), aligné au bord droit du bouton. */
+.lang__menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 12rem;
+  padding: 0.45rem;
+  margin: 0;
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+  z-index: 70;
+  display: grid;
+  gap: 2px;
+}
+/* L'attribut hidden doit gagner sur display:grid : sans cette règle, la
+   feuille de style de l'auteur recouvre toujours le comportement par
+   défaut du navigateur ([hidden] vit dans la feuille UA) et le menu
+   resterait affiché en permanence. */
+.lang__menu[hidden] {
+  display: none;
+}
+.lang__opt {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--forest);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--speed) var(--ease);
+}
+.lang__opt:hover {
+  background: var(--sky-2);
+}
+.lang__opt[aria-pressed="true"] {
+  /* Langue active : la coche (✓, ::after) est le repère principal ;
+     le fond teinté la rend lisible d'un coup d'œil dans le panneau. */
+  font-weight: 700;
+  background: rgba(192, 85, 66, 0.1);
+}
+.lang__opt[aria-pressed="true"]::after {
+  /* « \2713 » = coche. Échappement CSS ASCII : jamais ré-encodée en
+     caractère littéral — le même tick littéral a été corrompu (double
+     ré-encodage cp1252) dans la version minifiée servie par index.html. */
+  content: "\2713";
+  margin-left: auto;
+  color: var(--terracotta-btn);
+  font-weight: 700;
+}
+/* Puce « défaut » de l'option Français : le site replie sur le FR sans
+   langage mémorisé (« l2v-lang »). Ce libellé désigne le repli du site,
+   pas l'état courant — il reste affiché même si une autre langue est
+   choisie. La coche reste le marqueur de la langue active. */
+.lang__default {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.1rem 0.35rem;
+  border: 1px solid rgba(29, 59, 45, 0.18);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.lang__flag {
+  width: 22px;
+  height: 15px;
+  border-radius: 3px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: inset 0 0 0 1px rgba(29, 59, 45, 0.25);
+  flex-shrink: 0;
+}
+.lang__flag--fr {
+  background-image: var(--flag-fr);
+}
+.lang__flag--en {
+  background-image: var(--flag-en);
+}
+.lang__flag--nl {
+  background-image: var(--flag-nl);
+}
+
+/* Desktop (≥861px) : le bandeau est une grille à trois colonnes (§9c).
+   Le bouton reprend la colonne de droite, en miroir de la pilule « Menu ».
+   La nav recouvre les trois pistes (z-index 1) : le sélecteur passe à 2
+   comme la marque et la pilule pour rester cliquable ; la moitié droite de
+   la nav garde son dégagement --side-w, donc aucun chevauchement de lien. */
+@media (min-width: 861px) {
+  .header .lang {
+    grid-area: 1 / 3;
+    justify-self: end;
+    align-self: center;
+    position: relative;
+    z-index: 2;
+  }
+}
+/* Mobile : space-between écartait sinon le drapeau à l'autre bout —
+   une marge auto le plaçait à gauche du burger. order:2 le fait passer
+   après le burger dans le flux flex : tout à droite de la barre, et la
+   pilule est légèrement réduite pour garder d'air au bandeau. */
+@media (max-width: 860px) {
+  /* La pastille drapeau rétrécit sur mobile : elle garde son air. */
+  :root {
+    --lang-btn: 35px;
+  }
+  .lang {
+    order: 2;
+    margin-left: 0.35rem;
+    margin-right: calc(30px - var(--gutter)); /* pastille à pile 30px du bord droit */
+  }
+}
+/* L'anneau de focus clair pour zones sombres (hero, vague, footer) s'applique
+   déjà via la règle globale du header (§2), le menu déroulant vit sur blanc :
+   focus-visible cyan foncé de la règle de base. */
+
+/* ---------- 29b. Réseaux sociaux du header ----------
+   Les deux logos sortent sous la pastille de langue, HORS de la barre : le
+   bloc est enfant du .header (et non du .lang), donc il s'ancre sur le bord
+   visible de la fenêtre — le .header fait toute la largeur, `right: 0` ne
+   dépend donc d'aucune mesure de la page.
+   Géométrie : le bloc part du bord gauche de la pastille et court jusqu'au
+   bord droit de l'écran, en passant sous la barre. Il est COLLÉ à elle
+   (top: 100%) et partage sa matière (--plate-bg/--plate-blur) : les deux
+   forment une seule surface, d'où les coins haut droits et l'ombre de la
+   plaque retirée à l'ouverture (cf. §9).
+   Plancher de largeur : sous ~1280px, l'espace entre le drapeau et le bord
+   de l'écran (gouttière + pastille) est plus court que les deux icônes
+   (--social-w) — sans le min(), les icônes déborderaient du bloc. Le bloc
+   prend alors toute la largeur de son contenu et pousse vers la gauche.
+   Fermé : visibility:hidden — les liens sortent de l'ordre de tabulation
+   sans jamais être retirés du flux (le repli reste instantané).
+   Ouvert : le bloc se DÉROULE du haut de la navbar vers le bas (clip-path),
+   100 ms après la fin du déploiement de la nav — 460 ms de déploiement
+   (cf. §9c) plus 100 ms d'attente, soit 560 ms après le clic. À la
+   fermeture, le clip se referme : le bloc remonte se replier dans la barre.
+   Il ne peut pas chevaucher le menu des langues : ouvrir celui-ci
+   referme la nav (slamNav, dans js/i18n.js), donc le bloc disparaît. */
+:root {
+  /* Largeur du contenu du bloc : 110px (2 pastilles 40px + gap 8px + paddings ~11px) */
+  --social-w: 110px;
+}
+.social-drop {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  /* Ancre gauche = bord droit de l'écran - largeur du bloc - décalage langue (--btn-inset).
+     Ainsi le panneau reste pile sous la pastille langue décalée de 50px. */
+  left: calc(100% - var(--social-w) - var(--btn-inset));
+  z-index: 70;
+  display: flex;
+  justify-content: center; /* centre les 2 pastilles dans le bloc */
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: var(--plate-bg);
+  -webkit-backdrop-filter: blur(var(--plate-blur));
+  backdrop-filter: blur(var(--plate-blur));
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  box-shadow: var(--shadow);
+  visibility: hidden;
+  /* Déroulé : le bloc est replié sur sa ligne de haut (inset bas à 100 %) et
+     se déplie vers le bas, bord haut collé à la navbar. Le clip-path porte
+     seul l'apparition — pas de fondu, pas de translation. */
+  clip-path: inset(0 0 100% 0);
+  transition:
+    clip-path var(--speed) var(--ease),
+    visibility 0s linear var(--speed);
+}
+.js .header.is-nav-open .social-drop {
+  visibility: visible;
+  clip-path: inset(0 0 0 0);
+  transition:
+    clip-path var(--speed) var(--ease),
+    visibility 0s;
+  /* 100 ms après la fin du déploiement de la nav (460 ms, cf. §9c). */
+  transition-delay: 560ms;
+}
+/* Les pastilles : 40×40 px (au-dessus du minimum de 28 pt en desktop),
+   glyphe monochrome — currentColor porte la couleur, donc un seul endroit à
+   changer pour les deux réseaux. */
+.social__icon {
+  width: 20px;
+  height: 20px;
+}
+.social-drop a,
+.header__nav-social a {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: var(--forest);
+  transition:
+    background var(--speed) var(--ease),
+    color var(--speed) var(--ease);
+}
+.social-drop a:hover,
+.social-drop a:focus-visible,
+.header__nav-social a:hover,
+.header__nav-social a:focus-visible {
+  background: var(--sky-2);
+  color: var(--terracotta-dk);
+  text-decoration: none;
+}
+/* ---------- 29c. Réseaux sociaux dans le menu mobile ----------
+   Sous « Infos », les deux logos sur une seule ligne, alignés à gauche des
+   liens de la nav. Masqués par défaut (desktop) : le 4e <li> de la moitié
+   droite de la nav casserait sa répartition space-between (§9c). En desktop,
+   les réseaux sociaux sont dans le panneau .social-drop (§29b). */
+.header__nav-social {
+  display: none;
+}
+@media (max-width: 860px) {
+  /* Le panneau du header n'existe qu'en desktop : en mobile, les réseaux sont
+     dans le menu du burger. */
+  .social-drop {
+    display: none;
+  }
+  .header__nav-social {
+    display: flex;
+    justify-content: center; /* centre les 2 pastilles dans le bloc mobile */
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  /* Les liens du panneau ont un padding de texte (cf. §25) : ici, des
+     pastilles, donc pas de padding. */
+  .js .header__nav-social a {
+    padding: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Le délai d'apparition survivrait à la neutralisation des durées (§26) :
+     il est remis à zéro, le panneau apparaît sans retard. */
+  .social-drop {
+    transition-delay: 0s !important;
+  }
+}
+
+/* ============================================================
+   XX. Carrousel « Le camping en images » — jumeau du slider
+   « Nos locations » (mêmes classes .slider__*, comportement FLIP,
+   drag/swipe et auto ping-pong du script). Photos dans le dossier
+   dédié assets/img/camping/ : maintenir = éditer la liste <li>.
+   ============================================================ */
+/* Le titre « Le camping en images » a été retiré : l'espace entre le
+   bloc du dessus (grille intro) et le carrousel est porté par le
+   carrousel lui-même. */
+.camping__slider {
+  /* Marge renforcée de 10px par rapport à la grille d'intro au-dessus. */
+  margin-top: calc(3rem + 10px);
+}
+
+/* Hauteur figée = carte active (médias) + légende. Sans ça, le bloc
+   grandit/rétrécit à chaque changement de photo (360px vs 320px de
+   média) et la nav de flèches/pastilles saute verticalement. */
+.camping__viewport {
+  height: 400px;
+}
+
+.camping__track {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  transition: transform 0.3s ease;
+  will-change: transform;
+  touch-action: pan-y; /* vertical = scroll natif, horizontal = swipe */
+}
+
+/* Mesure FLIP et drag : toutes les transitions coupées le temps
+   d'observer ou de suivre le doigt (même méthode que les locations). */
+.camping__track.is-measuring,
+.camping__track.is-measuring .camp-card,
+.camping__track.is-measuring .camp-card__media {
+  transition: none !important;
+}
+
+.camp-card {
+  flex: 0 0 calc((100% - 3rem) / 3); /* largeur de base = 3 slides visibles */
+  transition:
+    flex-basis 0.3s ease,
+    margin 0.3s ease,
+    opacity var(--speed) var(--ease),
+    transform 0.3s var(--ease);
+  opacity: 0.55;
+  transform: scale(0.97);
+  transform-origin: center bottom;
+}
+
+.camp-card__media {
+  width: 100%;
+  height: 320px;
+  display: block;
+  object-fit: cover;
+  border-radius: 10px;
+  transition: height 0.3s ease;
+  /* Une seule ombre discrète, photo active seulement (cf. .is-active) */
+  box-shadow: transparent 0 0;
+}
+
+.camp-card__caption {
+  margin: 0;
+  padding: 0.8rem 0.5rem 0;
+  min-height: 2.4rem; /* légende toujours sur une ligne : hauteur stable */
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* La slide active : partagée avec le modèle locations —
+   +20% de largeur (1,44× la base), opacité pleine, échelle neutre.
+   Les marges négatives font passer la photo active PAR-DESSUS ses
+   voisines : le gap de 1,5rem est comblé puis dépassé de 1rem. */
+.camp-card.is-active {
+  opacity: 1;
+  transform: none;
+  /* +40% par rapport à l'ancienne valeur (1,44 → 2,016× la base) ;
+     hauteur et object-fit inchangées : la photo s'élargit, elle ne
+     s'étire pas. */
+  flex-basis: calc(((100% - 3rem) / 3) * 2.016);
+  margin-inline: -2.5rem;
+  z-index: 2;
+}
+.camp-card.is-active .camp-card__media {
+  height: 360px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Réductions comme les locations : 2 slides visibles en tablette,
+   1 plein-écran sur téléphone. */
+@media (max-width: 1024px) {
+  .camping__viewport {
+    height: 340px;
+  }
+  .camp-card {
+    flex-basis: calc((100% - 1.5rem) / 2);
+  }
+  .camp-card.is-active {
+    flex-basis: calc(((100% - 1.5rem) / 2) * 2.016);
+  }
+  .camp-card__media {
+    height: 260px;
+  }
+  .camp-card.is-active .camp-card__media {
+    height: 300px;
+  }
+}
+
+@media (max-width: 860px) {
+  .camping__viewport {
+    height: 320px;
+  }
+  .camp-card {
+    flex-basis: 82%;
+  }
+  .camp-card.is-active {
+    flex-basis: 100%;
+    /* 1 photo plein écran : pas de voisin à recouvrir */
+    margin-inline: 0;
+  }
+  .camp-card__media {
+    height: 240px;
+  }
+  .camp-card.is-active .camp-card__media {
+    height: 280px;
+  }
+}
+
+@media (max-width: 560px) {
+  .camp-card {
+    flex-basis: 88%;
+  }
+  .camp-card.is-active {
+    flex-basis: 100%;
+  }
+}
+
+/* Mouvement réduit : glissement instantané — l'avance AUTO est
+   déjà coupée par le script (identique au slider locations). */
+@media (prefers-reduced-motion: reduce) {
+  .camping__track,
+  .camp-card,
+  .camp-card__media {
+    transition: none;
+  }
+  .camp-card {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Nav du carrousel : compacte — elle ne fait plus la largeur du
+   container mais celle de ses contrôles (flèches + pastilles), et
+   elle remonte sous le carrousel. Sa position verticale est stable :
+   la hauteur du carrousel est figée (.camping__viewport), le bloc ne
+   grandit plus au changement de photo et la nav ne saute donc plus. */
+.camping__nav {
+  width: fit-content;
+  margin: 1rem auto 0;
+  gap: 0.5rem;
+}
+
+/* Compactage −50% : flèches 28px (mini HIG 28×28 au lieu de 44 par
+   défaut — la zone tactile est rattrapée par un ::after invisible),
+   pastilles 5px et pas resserré. La nav passe d'environ 338px (10
+   pastilles) à environ 167px. */
+.camping__nav .slider__arrow {
+  position: relative;
+  width: 28px;
+  height: 28px;
+}
+.camping__nav .slider__arrow svg {
+  width: 14px;
+  height: 14px;
+}
+.camping__nav .slider__arrow::after {
+  /* Zone tactile 44×44 dès desktop, toujours ≥ 28 (HIG accessibility) */
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+.camping__nav .slider__dots {
+  gap: 0.3125rem;
+}
+.camping__nav .slider__dots button {
+  width: 5px;
+  height: 5px;
+}
