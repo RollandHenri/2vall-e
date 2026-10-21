@@ -429,8 +429,7 @@ html:not(.js) .header :focus-visible,
 .img--history::after {
   display: none;
 }
-/* Cartes 1 à 3 du carrousel "Nos locations" : photos (chalet Sélection,
-   mobil-home Cosy 2 chambres, emplacement) chargées par <img> (cf. §6b). */
+/* Cartes du carrousel "Nos locations" : photos chargées par <img> (cf. §6b). */
 .img--offer1 {
   background-color: var(--sky);
 }
@@ -450,12 +449,16 @@ html:not(.js) .header :focus-visible,
   display: none;
 }
 .img--offer4 {
-  background: linear-gradient(150deg, #d9c3ea, #a987c9 55%, #6b4f8a);
-}
-/* Conservée pour la carte 5 du carrousel Locations (la galerie Instagram
-   dont elle venait a été supprimée). Photo chargée par <img> (cf. §6b). */
-.img--insta3 {
   background-color: var(--sky);
+}
+.img--offer4::after {
+  display: none;
+}
+.img--offer5 {
+  background-color: var(--sky);
+}
+.img--offer5::after {
+  display: none;
 }
 /* Photos des grands sites de la section « Région » (deck).
    Sources Wikimedia Commons, converties en webp ; chaque légende porte
@@ -482,8 +485,7 @@ html:not(.js) .header :focus-visible,
    à un élément remplacé. La classe .img (position, overflow, couleur
    d'attente) est conservée ; ses ::after ne s'affichent de toute façon pas
    sur un élément remplacé — les photos les avaient déjà désactivées.
-   (.img--insta3 et .img--offer4 gardent le mécanisme background :
-   dégradés ou motifs, pas des photos à élément remplacé.) */
+   (.toutes les .img--offer* sont désormais des photos <img> ; le mécanisme background n'est plus utilisé pour les locations.) */
 img.img {
   display: block;
   width: 100%;
@@ -2110,7 +2112,7 @@ html:not(.js) .header__nav a:focus-visible {
 }
 .locations__track {
   display: flex;
-  align-items: flex-end;
+  align-items: stretch;
   gap: 1.5rem;
   transition: transform 0.3s ease;
   will-change: transform;
@@ -2119,16 +2121,29 @@ html:not(.js) .header__nav a:focus-visible {
 .loc-card {
   flex: 0 0 calc((100% - 3rem) / 3); /* largeur de base = 3 slides visibles */
   display: grid;
-  grid-template-rows: var(--loc-media-max) auto;
+  grid-template-rows: var(--loc-media-max) 1fr auto;
   background: transparent;
   transition: flex-basis 0.3s ease;
+  contain: paint;
 }
 .loc-card__media {
   width: 100%;
-  height: 300px;
+  height: var(--loc-media-idle);
   align-self: end;
   border-radius: 10px;
   transition: height 0.3s ease;
+  object-fit: cover;
+  object-position: center;
+}
+/* Flou sur les cartes inactives — contenu seulement, pas le texte */
+.loc-card:not(.is-active) .loc-card__media {
+  filter: blur(4px);
+  -webkit-filter: blur(4px);
+  clip-path: inset(0 round 10px);
+}
+.loc-card.is-active {
+  position: relative;
+  z-index: 2;
 }
 /* Mesure FLIP, drag et chargement : toutes les transitions coupées
    le temps d'observer ou de suivre le doigt, puis réactivées. */
@@ -2140,20 +2155,35 @@ html:not(.js) .header__nav a:focus-visible {
 .loc-card__body {
   padding: 1.2rem 0.5rem 0;
   text-align: center;
-  min-height: 10rem;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  gap: 0.35rem;
+  min-height: 0;
 }
 .loc-card__title {
   font-size: 1.35rem;
-  margin-bottom: 0.35rem;
+  line-height: 1.2;
+  margin-bottom: 0;
 }
 .loc-card__meta {
   color: var(--muted);
   font-size: 0.95rem;
-  margin-bottom: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 0;
 }
-.loc-card__meta strong {
-  color: var(--terracotta);
+.loc-card__price {
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+.loc-card__price-value {
   font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--terracotta);
+}
+.loc-card__price[data-i18n="loc.perNight"] {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
 }
 
 /* La slide active : +20% de largeur par rapport à l'active précédente
@@ -2163,6 +2193,9 @@ html:not(.js) .header__nav a:focus-visible {
 }
 .loc-card.is-active .loc-card__media {
   height: var(--loc-media-max);
+  filter: none;
+  -webkit-filter: none;
+  clip-path: none;
 }
 
 .slider__nav {
@@ -3231,7 +3264,10 @@ html.is-contact-open {
     flex-basis: calc(((100% - 1.5rem) / 2) * 1.44);
   }
   .loc-card__media {
-    height: 260px;
+    height: var(--loc-media-idle);
+  }
+  .loc-card.is-active .loc-card__media {
+    height: var(--loc-media-max);
   }
   /* Deck : repli ≤1024px (mobile + tablette) = paires photo→texte.
      Les deux colonnes deviennent display:contents : les 5 figures et
@@ -3562,7 +3598,10 @@ html.is-contact-open {
     flex-basis: 100%;
   }
   .loc-card__media {
-    height: 240px;
+    height: var(--loc-media-idle);
+  }
+  .loc-card.is-active .loc-card__media {
+    height: var(--loc-media-max);
   }
 }
 
@@ -3719,9 +3758,12 @@ html.is-contact-open {
     position: relative;
     top: auto !important;
   }
-  /* Locations : pas d'agrandissement (toutes les cartes identiques) */
+  /* Locations : pas d'agrandissement (toutes les cartes identiques), pas de flou */
   .loc-card__media {
     transition: none;
+    filter: none !important;
+    -webkit-filter: none !important;
+    clip-path: none !important;
   }
   .loc-card.is-active .loc-card__media {
     height: var(--loc-media-idle);
@@ -3735,6 +3777,26 @@ html.is-contact-open {
   .header__nav-group li,
   .header__burger-bars span {
     transition-delay: 0s !important;
+  }
+}
+}
+
+/* ---------- 26b. Accessibilité : transparence réduite ----------
+   Désactive le flou décoratif pour les utilisateurs qui préfèrent
+   une interface sans effets de transparence/flou. */
+@media (prefers-reduced-transparency: reduce) {
+  .loc-card:not(.is-active) .loc-card__media {
+    filter: none;
+    -webkit-filter: none;
+    clip-path: none;
+  }
+}
+
+/* ---------- 26c. Fallback : navigateurs sans support filter ----------
+   Remplace le flou par une opacité réduite. */
+@supports not ((filter: blur(1px)) or (-webkit-filter: blur(1px))) {
+  .loc-card:not(.is-active) .loc-card__media {
+    opacity: 0.7;
   }
 }
 

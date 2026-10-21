@@ -304,29 +304,74 @@
      le CSS fait tout le lissage (courbe ease), plus de rAF.
      cfg = { root, track, slide, prev, next, dots, dotLabel(n) }.
   ============================================================ */
+  /* ============================================================
+   Carrousel "centres élargis" (locations + galerie camping)
+   Principe : une seule fonction pour les deux carrousels.
+   La slide centrée est agrandie (.is-active pilote le CSS) et le
+   glissement est une vraie transition CSS (transform .3s ease) :
+   goTo() mesure la position finale en FLIP (transitions coupées via
+   .is-measuring), restaure l'état de départ, puis lâche le track —
+   le CSS fait tout le lissage (courbe ease), plus de rAF.
+   cfg = { root, track, slide, prev, next, dots, dotLabel(n),
+            loop, autoplay }.
+   ============================================================ */
   function initCenterSlider(cfg) {
     var root = $(cfg.root);
     if (!root) return;
     var track = $(cfg.track);
     var viewport = $('.slider__viewport', root) || (track && track.parentElement);
-    var slides = $$(cfg.slide, track);
+    var originals = $$(cfg.slide, track);
     var prev = $(cfg.prev);
     var next = $(cfg.next);
     var dotsWrap = $(cfg.dots);
-    if (!track || !viewport || !slides.length) return;
-    var dotLabel = cfg.dotLabel; /* n (1-based) → libellé i18n de la pastille */
+    if (!track || !viewport || !originals.length) return;
+    var dotLabel = cfg.dotLabel; /* n (1-based) -> libelle i18n de la pastille */
+    var loop = !!cfg.loop;
+    var autoplay = cfg.autoplay !== false;
 
-    var index = 0;
+    /* --- Loop : cloner k slides en tete et en queue --- */
+    var CLONES_PER_SIDE = 2;
+    var slides = originals;
+    if (loop) {
+      var fragBefore = document.createDocumentFragment();
+      var fragAfter = document.createDocumentFragment();
+      for (var k = 0; k < CLONES_PER_SIDE; k++) {
+        var before = originals[originals.length - 1 - k].cloneNode(true);
+        var after = originals[k].cloneNode(true);
+        before.setAttribute('aria-hidden', 'true');
+        before.setAttribute('inert', '');
+        after.setAttribute('aria-hidden', 'true');
+        after.setAttribute('inert', '');
+        before.querySelectorAll('a,button').forEach(function (el) { el.setAttribute('tabindex', '-1'); });
+        after.querySelectorAll('a,button').forEach(function (el) { el.setAttribute('tabindex', '-1'); });
+        fragBefore.appendChild(before);
+        fragAfter.appendChild(after);
+      }
+      track.insertBefore(fragBefore, track.firstChild);
+      track.appendChild(fragAfter);
+      slides = $$(cfg.slide, track);
+    }
+
+    var index = 0; /* index LOGIQUE 0..originals.length-1 */
     var dragging = false;
     var startX = 0;
-    var dragBaseX = 0; /* position x du track à la prise en main */
+    var dragBaseX = 0;
+    var wrapPending = false;
+    var wrapDir = 0; /* -1 = wrap vers la fin, +1 = wrap vers le debut */
 
-    function maxIndex() { return slides.length - 1; }
+    function originalCount() { return originals.length; }
+    function maxLogicalIndex() { return originalCount() - 1; }
+    function logicalToPhysical(i) { return loop ? CLONES_PER_SIDE + i : i; }
+    function physicalToLogical(i) { return loop ? i - CLONES_PER_SIDE : i; }
+    function wrapLogical(i) {
+      var n = originalCount();
+      return ((i % n) + n) % n;
+    }
 
     function buildDots() {
       if (!dotsWrap) return;
       dotsWrap.innerHTML = '';
-      for (var i = 0; i <= maxIndex(); i++) {
+      for (var i = 0; i <= maxLogicalIndex(); i++) {
         (function (i) {
           var b = document.createElement('button');
           b.type = 'button';
@@ -337,9 +382,6 @@
       }
     }
 
-    /* Position x qui centre une donnée carte dans le viewport.
-       Le track démarre après le padding-inline du viewport : sans retirer
-       ce padding gauche, la carte active est décalée vers la droite. */
     function centeredX(card) {
       var padLeft =
         (parseFloat(window.getComputedStyle(viewport).paddingLeft) || 0) +
@@ -351,105 +393,116 @@
       );
     }
 
-    /* Position x réellement AFFICHÉE par le navigateur. Pendant une
-       transition, le style inline porte déjà la valeur engagée (la
-       cible) : seule getComputedStyle donne la valeur visible. Utile
-       pour enchaîner sans claquage (clic en rafale, drag en plein glide). */
     function visualX() {
       var t = window.getComputedStyle(track).transform;
       var m = t && t !== 'none' ? t.match(/matrix(?:3d)?\(([^)]+)\)/) : null;
       if (m) {
         var n = m[1].split(',').map(parseFloat);
-        return n.length === 6 ? n[4] : n[12]; /* matrix(a,b,c,d,x,y) / matrix3d */
+        return n.length === 6 ? n[4] : n[12];
       }
-      return centeredX(slides[index]);
+      return centeredX(slides[logicalToPhysical(index)]);
     }
 
-    /* Centre la carte active dans le viewport */
     function centerActive() {
-      track.style.transform = 'translate3d(' + centeredX(slides[index]) + 'px,0,0)';
+      track.style.transform = 'translate3d(' + centeredX(slides[logicalToPhysical(index)]) + 'px,0,0)';
     }
 
     function paintArrows() {
-      if (prev) prev.disabled = index <= 0;
-      if (next) next.disabled = index >= maxIndex();
+      if (!loop) {
+        if (prev) prev.disabled = index <= 0;
+        if (next) next.disabled = index >= maxLogicalIndex();
+      }
       if (dotsWrap) {
         $$('button', dotsWrap).forEach(function (d, i) {
           d.classList.toggle('is-active', i === index);
-          /* aria-current (et non aria-selected : ce ne sont pas des onglets) */
           if (i === index) d.setAttribute('aria-current', 'true');
           else d.removeAttribute('aria-current');
         });
       }
+      /* Region live pour l'annonce "n sur N" */
+      if (root && root.dataset.ariaLive) {
+        root.dataset.ariaLive = (index + 1) + ' sur ' + originalCount();
+      }
     }
 
-    /* goTo(i) : la CSS glisse le track en ease .3s jusqu'à la position
-       finale mesurée ici sans animer (méthode FLIP) :
-       1. transitions coupées (.is-measuring) → nouvel état + lecture de
-          la position de repos finale exacte ;
-       2. restauration de l'état de départ (+ reflow = point de départ) ;
-       3. transitions réactivées → classes + transform : cartes et track
-          glissent ensemble, même durée, même courbe ease.
-       instant = true : positionnement immédiat (aucun glissement au
-       chargement — transform posé pendant .is-measuring). */
+    function flushWrap() {
+      if (!wrapPending) return;
+      wrapPending = false;
+      var targetPhys = logicalToPhysical(index);
+      track.classList.add('is-measuring');
+      track.style.transform = 'translate3d(' + centeredX(slides[targetPhys]) + 'px,0,0)';
+      void track.offsetHeight;
+      track.classList.remove('is-measuring');
+    }
+
     function goTo(i, instant) {
-      var j = Math.max(0, Math.min(maxIndex(), i));
+      var n = originalCount();
+      var j = wrapLogical(i);
       var prevIndex = index;
-      var x;
+      var prevPhys = logicalToPhysical(prevIndex);
+      var targetPhys = logicalToPhysical(j);
+
+      /* Si on demande un wrap immediat (clic fleche depuis les extremites) */
+      if (loop && ((j === 0 && prevIndex === maxLogicalIndex()) || (j === maxLogicalIndex() && prevIndex === 0))) {
+        wrapDir = (j === 0) ? -1 : 1;
+        wrapPending = true;
+      }
 
       /* a. Changement de slide avec glissement (cas normal) */
       if (j !== prevIndex && !instant) {
-        /* ancre sur la position visuelle courante : l'ajout de
-           .is-measuring annulerait la transition en cours et la
-           ferait sauter à sa valeur engagée (saut en clic rafale) */
         var anchor = visualX();
-        /* 1. Géométrie finale mesurée sans animer */
         track.classList.add('is-measuring');
-        slides.forEach(function (s, n) { s.classList.toggle('is-active', n === j); });
-        x = centeredX(slides[j]);
-        /* 2. Retour à l'état de départ + ancre visuelle, reflow enregistré */
-        slides.forEach(function (s, n) { s.classList.toggle('is-active', n === prevIndex); });
+        slides.forEach(function (s, n) { s.classList.toggle('is-active', n === targetPhys); });
+        var x = centeredX(slides[targetPhys]);
+        slides.forEach(function (s, n) { s.classList.toggle('is-active', n === prevPhys); });
         track.style.transform = 'translate3d(' + anchor + 'px,0,0)';
         void track.offsetHeight;
-        /* 3. Transitions réactivées : on lâche classes + transform */
         track.classList.remove('is-measuring');
         index = j;
-        slides.forEach(function (s, n) { s.classList.toggle('is-active', n === index); });
+        slides.forEach(function (s, n) { s.classList.toggle('is-active', n === targetPhys); });
         paintArrows();
+        /* Gestion focus/tabindex : seul le lien de la slide active reste tabulable */
+        updateTabIndex();
         track.style.transform = 'translate3d(' + x + 'px,0,0)';
         scheduleAuto();
         return;
       }
 
-      /* b. Retour au centre après un drag court : glissement doux */
+      /* b. Retour au centre apres un drag court : glissement doux */
       if (j === prevIndex && !instant) {
-        x = centeredX(slides[index]);
-        track.style.transform = 'translate3d(' + x + 'px,0,0)';
+        var x2 = centeredX(slides[index]);
+        track.style.transform = 'translate3d(' + x2 + 'px,0,0)';
         scheduleAuto();
         return;
       }
 
-      /* c. Positionnement instantané : tout est posé avec les
-         transitions coupées, puis réactivé — aucun glissement parasite */
+      /* c. Positionnement instantane */
       track.classList.add('is-measuring');
       index = j;
-      slides.forEach(function (s, n) { s.classList.toggle('is-active', n === index); });
+      slides.forEach(function (s, n) { s.classList.toggle('is-active', n === targetPhys); });
       paintArrows();
-      x = centeredX(slides[index]);
-      track.style.transform = 'translate3d(' + x + 'px,0,0)';
+      updateTabIndex();
+      var x3 = centeredX(slides[targetPhys]);
+      track.style.transform = 'translate3d(' + x3 + 'px,0,0)';
       void track.offsetHeight;
       track.classList.remove('is-measuring');
       scheduleAuto();
     }
 
+    function updateTabIndex() {
+      /* Seul le CTA de la slide active est tabulable */
+      originals.forEach(function (card, i) {
+        var link = card.querySelector('a[href="#locations"]');
+        if (link) link.setAttribute('tabindex', i === index ? '0' : '-1');
+      });
+    }
+
     if (prev) prev.addEventListener('click', function () { goTo(index - 1); });
     if (next) next.addEventListener('click', function () { goTo(index + 1); });
 
-    /* Drag / swipe (souris + doigt) — clearAuto() : pas d'avance auto
-       pendant le geste ; .is-measuring coupe la transition du track
-       pour suivre le doigt au pixel. On ancre sur la position
-       visuelle (visualX) pour enchaîner sans claquage en plein glide. */
+    /* Drag / swipe */
     track.addEventListener('pointerdown', function (e) {
+      flushWrap(); /* executer le wrap en attente avant de demarrer le drag */
       dragging = true; startX = e.clientX;
       clearAuto();
       dragBaseX = visualX();
@@ -464,51 +517,63 @@
     function endDrag(e) {
       if (!dragging) return;
       dragging = false;
-      track.classList.remove('is-measuring'); /* la transition reprend */
+      track.classList.remove('is-measuring');
       var dx = (e.clientX || startX) - startX;
       var threshold = 50;
+      var wasClick = Math.abs(dx) < 5; /* clic sans glisser */
       if (dx < -threshold) goTo(index + 1);
       else if (dx > threshold) goTo(index - 1);
       else goTo(index);
+      if (wasClick) {
+        /* Clic sur un lien dans la slide : laisser le navigateur suivre le href */
+        var link = e.target.closest('a');
+        if (link && link.href && link.href !== location.href + '#locations') return;
+        /* Sinon on empeche le clic fantome apres drag */
+        e.preventDefault();
+      }
     }
     track.addEventListener('pointerup', endDrag);
     track.addEventListener('pointercancel', endDrag);
 
-    /* Navigation clavier (le conteneur a tabindex=0) */
+    /* Navigation clavier */
     root.addEventListener('keydown', function (e) {
       if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(index - 1); }
       else if (e.key === 'ArrowRight') { e.preventDefault(); goTo(index + 1); }
+      else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+      else if (e.key === 'End') { e.preventDefault(); goTo(maxLogicalIndex()); }
     });
 
-    /* Recalcul au redimensionnement : recentrage instantané (sans glide) */
+    /* ResizeObserver + window.resize fallback */
+    var ro = 'ResizeObserver' in window ? new ResizeObserver(function () {
+      if (dragging) return;
+      track.classList.add('is-measuring');
+      centerActive();
+      void track.offsetHeight;
+      track.classList.remove('is-measuring');
+      updateTabIndex();
+    }) : null;
+    if (ro) ro.observe(viewport);
     var rt;
     window.addEventListener('resize', function () {
       clearTimeout(rt);
       rt = setTimeout(function () {
+        if (dragging) return;
         track.classList.add('is-measuring');
         centerActive();
         void track.offsetHeight;
         track.classList.remove('is-measuring');
+        updateTabIndex();
       }, 120);
     });
 
     /* ============================================================
-       Auto-défilement (ping-pong)
-       - Une slide toutes les 6s ; à une extrémité on INVERSE la
-         direction (pas de boucle : fin → arrière, début → avant).
-       - Pause tant que la section est survolée (hover) ; reprise
-         immédiate au départ du curseur.
-       - Veille si l'onglet est caché ou si la section est hors écran
-         (aucun « rattrapage » brutal au retour).
-       - Désactivé sous prefers-reduced-motion et si < 2 slides.
-       - Toute action manuelle (goTo) remet le minuteur à 6s.
-       Le timer est piloté par scheduleAuto() appelé en fin de goTo(). */
+       Auto-defilement (optionnel, ping-pong pour camping, desactive pour locations) */
     var AUTO_DELAY = 6000;
-    var autoDir = 1; /* direction courante : 1 = avant, -1 = arrière */
+    var autoDir = 1;
     var autoTimer = null;
-    var autoHover = false;   /* curseur sur la section */
-    var autoTab = true;      /* onglet actif (visibilitychange) */
-    var autoInView = true;   /* section à l'écran (IntersectionObserver) */
+    var autoHover = false;
+    var autoTab = true;
+    var autoInView = true;
 
     function clearAuto() {
       if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
@@ -516,8 +581,7 @@
 
     function scheduleAuto() {
       clearAuto();
-      /* Appareil sans survol (mobile / tablette tactile) : l'avance
-         automatique est désactivée — aucune pause possible au doigt. */
+      if (!autoplay) return;
       if (window.matchMedia('(hover: none)').matches) return;
       if (reduceMotion || autoHover || !autoTab || !autoInView) return;
       if (slides.length < 2) return;
@@ -526,37 +590,33 @@
 
     function stepAuto() {
       autoTimer = null;
-      /* on n'avance jamais pendant un drag ; le timer sera remis
-         à la fin du geste (endDrag → goTo → scheduleAuto) */
       if (dragging) { scheduleAuto(); return; }
-      /* ping-pong : rebrousse chemin aux extrémités, jamais de wrap */
-      if (index >= maxIndex()) autoDir = -1;
-      else if (index <= 0) autoDir = 1;
-      goTo(index + autoDir); /* goTo remet le minuteur à zéro via scheduleAuto */
+      if (loop) {
+        goTo(index + 1);
+      } else {
+        if (index >= maxLogicalIndex()) autoDir = -1;
+        else if (index <= 0) autoDir = 1;
+        goTo(index + autoDir);
+      }
     }
 
-    /* Pause au survol tant que l'élément est survolé */
+    /* Pause au survol */
     root.addEventListener('mouseenter', function () { autoHover = true; clearAuto(); });
     root.addEventListener('mouseleave', function () { autoHover = false; scheduleAuto(); });
 
-    /* En veille si l'onglet est caché (état indépendant de l'écran :
-       un retour d'onglet ne doit pas relancer un slider hors écran) */
+    /* Pause au focus clavier (accessibilite) */
+    root.addEventListener('focusin', function () { autoHover = true; clearAuto(); });
+    root.addEventListener('focusout', function () { autoHover = false; scheduleAuto(); });
+
     document.addEventListener('visibilitychange', function () {
       autoTab = !document.hidden;
       if (autoTab) scheduleAuto(); else clearAuto();
     });
 
-    /* La préférence "mouvement réduit" peut changer en session : le
-       gestionnaire global émet "motionchange" → on réévalue la minuterie
-       (scheduleAuto lit reduceMotion, mis à jour avant l'évènement). */
     document.addEventListener('motionchange', function () {
       if (reduceMotion) clearAuto(); else scheduleAuto();
     });
 
-    /* En veille si la section est hors écran (pas de défilement fantôme).
-       Sans IntersectionObserver, autoInView reste true (défilement actif).
-       Note : le seuil ne pilote que le déclenchement du callback — sur
-       une section plus haute que l'écran, un ratio strict serait inatteignable. */
     if ('IntersectionObserver' in window) {
       (new IntersectionObserver(function (entries) {
         autoInView = entries[0].isIntersecting;
@@ -565,17 +625,22 @@
     }
 
     buildDots();
-    /* Position de départ : cfg.initial (index) sinon 0. Le carrousel
-       « Le camping en images » démarre sur sa 5e photo (initial: 4). */
-    goTo(cfg.initial || 0, true); /* positionnement initial instantané */
+    goTo(cfg.initial || 0, true);
+    updateTabIndex();
 
-    /* Changement de langue : les pastilles relisent leur libellé */
+    /* Changement de langue : relire les labels des pastilles ET reformater les prix */
     document.addEventListener('langchange', function () {
       if (!dotsWrap) return;
       $$('button', dotsWrap).forEach(function (d, i) {
         d.setAttribute('aria-label', dotLabel(i + 1));
       });
+      formatLocPrices();
     });
+
+    /* Exposer pour le formatage des prix */
+    root.formatLocPrices = formatLocPrices;
+
+    return { formatLocPrices: formatLocPrices };
   }
 
   initCenterSlider({
@@ -587,7 +652,9 @@
     dots: '#locDots',
     dotLabel: function (n) {
       return tt('js.locDot', 'Aller à la location {n}', { n: n });
-    }
+    },
+    loop: true,
+    autoplay: false
   });
 
   initCenterSlider({
@@ -600,8 +667,45 @@
     initial: 4, /* photo active au chargement : la 5e (Nos locations) */
     dotLabel: function (n) {
       return tt('js.campDot', 'Aller à la photo {n}', { n: n });
-    }
+    },
+    loop: false,
+    autoplay: true
   });
+
+  /* ============================================================
+     Formatage des prix & surfaces (locations) — piloté par data-*
+     Appelé au chargement et à chaque changement de langue. */
+  function formatLocPrices() {
+    var lang = (document.documentElement.lang || 'fr').split('-')[0];
+    var localeMap = { fr: 'fr-FR', en: 'en-GB', nl: 'nl-NL' };
+    var locale = localeMap[lang] || 'fr-FR';
+    var surfaceFmt = new Intl.NumberFormat(locale);
+    $$('.loc-card[data-price]').forEach(function (card) {
+      var priceEl = card.querySelector('.loc-card__price-value[data-price]');
+      var surfaceEl = card.querySelector('.loc-card__price-value[data-surface]');
+      var price = parseFloat(card.getAttribute('data-price'));
+      var surface = parseFloat(card.getAttribute('data-surface'));
+      if (!isNaN(price) && priceEl) {
+        var priceOpts = {
+          style: 'currency',
+          currency: 'EUR',
+          minimumFractionDigits: price % 1 ? 2 : 0,
+          maximumFractionDigits: price % 1 ? 2 : 0
+        };
+        priceEl.textContent = price.toLocaleString(locale, priceOpts);
+      }
+      if (!isNaN(surface) && surfaceEl) {
+        surfaceEl.textContent = surfaceFmt.format(surface) + '\u00a0m\u00b2';
+      }
+    });
+  }
+
+  /* Appel initial (après que le DOM et l'i18n sont prêts) */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', formatLocPrices);
+  } else {
+    formatLocPrices();
+  }
 
   /* ============================================================
      7b. Galerie "deck" : photo N et légende N sont épinglées

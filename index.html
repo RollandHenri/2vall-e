@@ -25,7 +25,7 @@
       as="font"
       crossorigin
     />
-    <link rel="stylesheet" href="css/style.min.css?v=48" />
+    <link rel="stylesheet" href="css/style.css" />
     <link rel="icon" href="favicon.png" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <!-- Pas de referer qui fuite vers les plateformes externes (réservation). -->
@@ -1341,25 +1341,29 @@
         >
           <div class="slider__viewport locations__viewport">
             <ul class="slider__track locations__track" id="locationsTrack">
-              <li class="loc-card">
+              <li class="loc-card" data-price="46" data-surface="12" data-type="chalet">
                 <img
                   class="loc-card__media img img--offer1"
-                  src="assets/img/locations/location-chalet.webp"
-                  width="627"
-                  height="527"
-                  alt="Chalet Sélection"
+                  src="assets/img/locations/location-chalet-700w.webp"
+                  srcset="assets/img/locations/location-chalet-700w.webp 700w, assets/img/locations/location-chalet-1400w.webp 1400w"
+                  sizes="(max-width: 860px) 90vw, (max-width: 1024px) 45vw, 33vw"
+                  width="700"
+                  height="588"
+                  alt="Chalet Sélection vu de l'extérieur, terrasse couverte et végétation"
                   loading="lazy"
                   decoding="async"
                   data-i18n-attr="alt:l1.aria"
                 />
                 <div class="loc-card__body">
                   <h3 class="loc-card__title" data-i18n="l1.title">
-                    Chalet Sélection 1 à 4 Personnes
+                    Chalet Sélection 1 à 4 personnes
                   </h3>
                   <p class="loc-card__meta" data-i18n="l1.meta">
-                    2 chambres - Lave-Vaisselle - TV <br />
-                    Terrasse couverte 12m² <br />
-                    à partir de <strong>46&nbsp;€</strong> / nuit
+                    2 chambres · lave-vaisselle · TV<br />
+                    Terrasse couverte 12 m²
+                  </p>
+                  <p class="loc-card__price" data-i18n="loc.perNight">
+                    <span class="loc-card__price-value" data-price></span> / nuit
                   </p>
                   <a
                     href="#locations"
@@ -1369,25 +1373,29 @@
                   >
                 </div>
               </li>
-              <li class="loc-card">
+              <li class="loc-card" data-price="35" data-surface="26" data-type="mobilhome">
                 <img
                   class="loc-card__media img img--offer2"
-                  src="assets/img/locations/location-cosy-2ch.webp"
-                  width="627"
-                  height="527"
-                  alt="Mobil-home Cosy 2 chambres"
+                  src="assets/img/locations/location-cosy-2ch-700w.webp"
+                  srcset="assets/img/locations/location-cosy-2ch-700w.webp 700w, assets/img/locations/location-cosy-2ch-1400w.webp 1400w"
+                  sizes="(max-width: 860px) 90vw, (max-width: 1024px) 45vw, 33vw"
+                  width="700"
+                  height="588"
+                  alt="Mobil-home Classic, façade claire avec terrasse en bois"
                   loading="lazy"
                   decoding="async"
                   data-i18n-attr="alt:l2.aria"
                 />
                 <div class="loc-card__body">
                   <h3 class="loc-card__title" data-i18n="l2.title">
-                    Mobil-home Classic 1 à 5 Personnes
+                    Mobil-home Classic 1 à 5 personnes
                   </h3>
                   <p class="loc-card__meta" data-i18n="l2.meta">
-                    2 chambres - Terrasse 12m² <br />
-                    TV - Superficie 26m² <br />
-                    à partir de <strong>35&nbsp;€</strong> / nuit
+                    2 chambres · Terrasse 12 m²<br />
+                    TV · Superficie 26 m²
+                  </p>
+                  <p class="loc-card__price" data-i18n="loc.perNight">
+                    <span class="loc-card__price-value" data-price></span> / nuit
                   </p>
                   <a
                     href="#locations"
@@ -1397,25 +1405,29 @@
                   >
                 </div>
               </li>
-              <li class="loc-card">
+              <li class="loc-card" data-price="13.30" data-surface="100" data-type="emplacement">
                 <img
                   class="loc-card__media img img--offer3"
-                  src="assets/img/locations/enmplacement.webp"
-                  width="619"
-                  height="400"
-                  alt="Emplacement de camping avec un camping-car et son auvent"
+                  src="assets/img/locations/emplacement-nature-700w.webp"
+                  srcset="assets/img/locations/emplacement-nature-700w.webp 700w, assets/img/locations/emplacement-nature-1400w.webp 1400w"
+                  sizes="(max-width: 860px) 90vw, (max-width: 1024px) 45vw, 33vw"
+                  width="700"
+                  height="525"
+                  alt="Emplacement Nature : tente installée sur une parcelle herbeuse, ombragée par les arbres"
                   loading="lazy"
                   decoding="async"
                   data-i18n-attr="alt:l3.aria"
                 />
                 <div class="loc-card__body">
                   <h3 class="loc-card__title" data-i18n="l3.title">
-                    Emplacement Nature 1 à 6 Personnes
+                    Emplacement Nature 1 à 6 personnes
                   </h3>
                   <p class="loc-card__meta" data-i18n="l3.meta">
                     Tente, caravane ou camping-car<br />
-                    Environ 100m² <br />
-                    à partir de <strong>13,30&nbsp;€</strong> / nuit
+                    Environ 100 m²
+                  </p>
+                  <p class="loc-card__price" data-i18n="loc.perNight">
+                    <span class="loc-card__price-value" data-price></span> / nuit
                   </p>
                   <a
                     href="#locations"
@@ -1425,25 +1437,29 @@
                   >
                 </div>
               </li>
-              <li class="loc-card">
+              <li class="loc-card" data-price="18.50" data-surface="100" data-type="emplacement">
                 <img
-                  class="loc-card__media img img--offer3"
-                  src="assets/img/locations/emplacement_confort.webp"
-                  width="619"
-                  height="400"
-                  alt="Emplacement de camping avec un camping-car et son auvent"
+                  class="loc-card__media img img--offer4"
+                  src="assets/img/locations/emplacement-confort-700w.webp"
+                  srcset="assets/img/locations/emplacement-confort-700w.webp 700w, assets/img/locations/emplacement-confort-1400w.webp 1400w"
+                  sizes="(max-width: 860px) 90vw, (max-width: 1024px) 45vw, 33vw"
+                  width="700"
+                  height="526"
+                  alt="Emplacement Confort : caravane équipée de son auvent et d'une table de jardin"
                   loading="lazy"
                   decoding="async"
-                  data-i18n-attr="alt:l3.aria"
+                  data-i18n-attr="alt:l4.aria"
                 />
                 <div class="loc-card__body">
                   <h3 class="loc-card__title" data-i18n="l4.title">
-                    Emplacement Confort 1 à 6 Personnes
+                    Emplacement Confort 1 à 6 personnes
                   </h3>
                   <p class="loc-card__meta" data-i18n="l4.meta">
                     Tente, caravane ou camping-car<br />
-                    Electricité 10A - Environ 100m² <br />
-                    à partir de <strong>13,30&nbsp;€</strong> / nuit
+                    Électricité 10 A · Environ 100 m²
+                  </p>
+                  <p class="loc-card__price" data-i18n="loc.perNight">
+                    <span class="loc-card__price-value" data-price></span> / nuit
                   </p>
                   <a
                     href="#locations"
@@ -1453,25 +1469,29 @@
                   >
                 </div>
               </li>
-              <li class="loc-card">
+              <li class="loc-card" data-price="65" data-surface="21" data-type="chalet">
                 <img
-                  class="loc-card__media img img--insta3"
-                  src="assets/img/locations/cabane_robinson.webp"
-                  width="619"
-                  height="646"
-                  alt="Tente safari"
+                  class="loc-card__media img img--offer5"
+                  src="assets/img/locations/cabane-robinson-exterior-700w.webp"
+                  srcset="assets/img/locations/cabane-robinson-exterior-700w.webp 700w, assets/img/locations/cabane-robinson-exterior-1400w.webp 1400w"
+                  sizes="(max-width: 860px) 90vw, (max-width: 1024px) 45vw, 33vw"
+                  width="700"
+                  height="588"
+                  alt="Cabane Robinson vue de l'extérieur, construction bois sur pilotis avec terrasse couverte"
                   loading="lazy"
                   decoding="async"
                   data-i18n-attr="alt:l5.aria"
                 />
                 <div class="loc-card__body">
                   <h3 class="loc-card__title" data-i18n="l5.title">
-                    Cabane ROBINSON 1 à 5 Personnes
+                    Cabane Robinson 1 à 5 personnes
                   </h3>
                   <p class="loc-card__meta" data-i18n="l5.meta">
-                    2 chambres - Sans sanitaires<br />
-                    Environ 21m² <br />
-                    à partir de <strong>29&nbsp;€</strong> / nuit
+                    2 chambres · Sans sanitaires<br />
+                    Environ 21 m²
+                  </p>
+                  <p class="loc-card__price" data-i18n="loc.perNight">
+                    <span class="loc-card__price-value" data-price></span> / nuit
                   </p>
                   <a
                     href="#locations"
@@ -2429,7 +2449,7 @@
       </svg>
     </button>
 
-    <script src="js/i18n.min.js?v=20" defer></script>
-    <script src="js/script.min.js?v=15" defer></script>
+    <script src="js/i18n.js" defer></script>
+    <script src="js/script.js" defer></script>
   </body>
 </html>
